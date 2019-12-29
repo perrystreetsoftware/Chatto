@@ -26,7 +26,7 @@ import UIKit
 
 public typealias PhotoMessageCollectionViewCellStyleProtocol = PhotoBubbleViewStyleProtocol
 
-public final class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBubbleView> {
+open class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBubbleView> {
 
     static func sizingCell() -> PhotoMessageCollectionViewCell {
         let cell = PhotoMessageCollectionViewCell(frame: CGRect.zero)
