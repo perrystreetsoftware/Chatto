@@ -138,7 +138,7 @@ open class ChatInputBar: ReusableXibView {
         super.layoutSubviews()
     }
 
-    var inputItems = [ChatInputItemProtocol]() {
+    open var inputItems = [ChatInputItemProtocol]() {
         didSet {
             let inputItemViews = self.inputItems.map { (item: ChatInputItemProtocol) -> ChatInputItemView in
                 let inputItemView = ChatInputItemView()
