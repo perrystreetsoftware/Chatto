@@ -26,7 +26,7 @@ import UIKit
 
 public typealias TextMessageCollectionViewCellStyleProtocol = TextBubbleViewStyleProtocol
 
-public final class TextMessageCollectionViewCell: BaseMessageCollectionViewCell<TextBubbleView> {
+open class TextMessageCollectionViewCell: BaseMessageCollectionViewCell<TextBubbleView> {
 
     public static func sizingCell() -> TextMessageCollectionViewCell {
         let cell = TextMessageCollectionViewCell(frame: CGRect.zero)

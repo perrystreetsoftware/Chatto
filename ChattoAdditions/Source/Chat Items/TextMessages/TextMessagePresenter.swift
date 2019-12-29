@@ -59,7 +59,7 @@ open class TextMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
     let layoutCache: NSCache<AnyObject, AnyObject>
     let textCellStyle: TextMessageCollectionViewCellStyleProtocol
 
-    public final override class func registerCells(_ collectionView: UICollectionView) {
+    open override class func registerCells(_ collectionView: UICollectionView) {
         collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: "text-message-incoming")
         collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: "text-message-outcoming")
     }
