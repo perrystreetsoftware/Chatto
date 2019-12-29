@@ -53,7 +53,7 @@ open class PhotoMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
             )
     }
 
-    public final override class func registerCells(_ collectionView: UICollectionView) {
+    open override class func registerCells(_ collectionView: UICollectionView) {
         collectionView.register(PhotoMessageCollectionViewCell.self, forCellWithReuseIdentifier: "photo-message")
     }
 
