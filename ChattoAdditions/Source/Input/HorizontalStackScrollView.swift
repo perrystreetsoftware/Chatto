@@ -73,7 +73,15 @@ open class HorizontalStackScrollView: UIScrollView {
                 self.addConstraint(constraint)
                 self.arrangedViewContraints.append(constraint)
             }
-            self.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+            let constraintTop = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0)
+            self.addConstraint(constraintTop)
+            let constraintBottom = NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0)
+            self.addConstraint(constraintBottom)
+
+            // when you constrain center, instead of pinning top and bottom,
+            // there is a consraint violation
+
+            // self.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         }
     }
 }
