@@ -192,7 +192,7 @@ open class ChatInputBar: ReusableXibView {
         self.sendButton.isEnabled = self.shouldEnableSendButton
     }
 
-    @IBAction func buttonTapped(_ sender: AnyObject) {
+    @IBAction public func buttonTapped(_ sender: AnyObject) {
         self.presenter?.onSendButtonPressed()
         self.delegate?.inputBarSendButtonPressed(self)
     }
@@ -289,7 +289,7 @@ extension ChatInputBar: UITextViewDelegate {
         self.delegate?.inputBarDidChangeText(self)
     }
 
-    public func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {
+    open func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {
         guard let maxCharactersCount = self.maxCharactersCount else { return true }
         let currentText: NSString = textView.text as NSString
         let currentCount = currentText.length
