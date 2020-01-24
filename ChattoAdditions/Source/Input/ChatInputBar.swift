@@ -192,7 +192,7 @@ open class ChatInputBar: ReusableXibView {
         self.sendButton.isEnabled = self.shouldEnableSendButton
     }
 
-    @IBAction func buttonTapped(_ sender: AnyObject) {
+    @IBAction public func buttonTapped(_ sender: AnyObject) {
         self.presenter?.onSendButtonPressed()
         self.delegate?.inputBarSendButtonPressed(self)
     }
