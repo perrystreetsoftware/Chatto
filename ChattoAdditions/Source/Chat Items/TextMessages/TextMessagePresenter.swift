@@ -58,9 +58,12 @@ open class TextMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
     let layoutCache: NSCache<AnyObject, AnyObject>
     let textCellStyle: TextMessageCollectionViewCellStyleProtocol
 
+    open class var incomingCellIdentifier: String { "text-message-incoming" }
+    open class var outcomingCellIdentifier: String { "text-message-outcoming" }
+
     open override class func registerCells(_ collectionView: UICollectionView) {
-        collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: "text-message-incoming")
-        collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: "text-message-outcoming")
+        collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: incomingCellIdentifier)
+        collectionView.register(TextMessageCollectionViewCell.self, forCellWithReuseIdentifier: outcomingCellIdentifier)
     }
 
     open override var isItemUpdateSupported: Bool {
@@ -68,7 +71,7 @@ open class TextMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
     }
 
     public final override func dequeueCell(collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
-        let identifier = self.messageViewModel.isIncoming ? "text-message-incoming" : "text-message-outcoming"
+        let identifier = self.messageViewModel.isIncoming ? Self.incomingCellIdentifier : Self.outcomingCellIdentifier
         return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
     }
 
