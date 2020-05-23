@@ -93,7 +93,7 @@ public final class TextBubbleView: UIView, MaximumLayoutWidthSpecificable, Backg
     }()
 
     private var borderImageView: UIImageView = UIImageView()
-    private var textView: UITextView = {
+    public var textView: UITextView = {
         let textView = ChatMessageTextView()
         UIView.performWithoutAnimation({ () -> Void in // fixes iOS 8 blinking when cell appears
             textView.backgroundColor = UIColor.clear
