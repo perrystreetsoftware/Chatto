@@ -26,8 +26,118 @@ import UIKit
 import Chatto
 import ChattoAdditions
 
+final class CustomChatInputBar: UIView, ChatInputBarProtocol {
+    var maxCharactersCount: UInt?
+
+
+    var showsTextView: Bool = true
+    var showsSendButton: Bool = true
+
+    var inputText: String {
+        get {
+            inputTextView.text ?? ""
+        }
+        set {
+            inputTextView.text = newValue
+        }
+    }
+
+    public var inputTextView: UITextView {
+        return self.textView
+    }
+
+    private let textView: ExpandableTextView = {
+        return ExpandableTextView()
+    }()
+
+    private let sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Send", for: .normal)
+        return button
+    }()
+
+    func setAppearance(_ appearance: ChatInputBarAppearance) {
+
+    }
+
+    var inputItems: [ChatInputItemProtocol] = [ChatInputItemProtocol]()
+
+    weak var presenter: ChatInputBarPresenter?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        translatesAutoresizingMaskIntoConstraints = false
+        let rootStackView = UIStackView()
+        rootStackView.axis = .horizontal
+        rootStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(rootStackView)
+        rootStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        rootStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        rootStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        rootStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+
+        rootStackView.addArrangedSubview(textView)
+        rootStackView.addArrangedSubview(sendButton)
+
+        self.textView.scrollsToTop = false
+        self.textView.delegate = self
+        self.textView.placeholderDelegate = self
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: UITextViewDelegate
+extension CustomChatInputBar: UITextViewDelegate {
+    public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+//        return self.delegate?.inputBarShouldBeginTextEditing(self) ?? true
+        return true
+    }
+
+    public func textViewDidEndEditing(_ textView: UITextView) {
+        self.presenter?.onDidEndEditing()
+//        self.delegate?.inputBarDidEndEditing(self)
+    }
+
+    public func textViewDidBeginEditing(_ textView: UITextView) {
+        self.presenter?.onDidBeginEditing()
+//        self.delegate?.inputBarDidBeginEditing(self)
+    }
+
+    public func textViewDidChange(_ textView: UITextView) {
+//        self.updateSendButton()
+//        self.delegate?.inputBarDidChangeText(self)
+    }
+
+    public func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {
+        guard let maxCharactersCount = self.maxCharactersCount else { return true }
+        let currentText: NSString = textView.text as NSString
+        let currentCount = currentText.length
+        let rangeLength = nsRange.length
+        let nextCount = currentCount - rangeLength + (text as NSString).length
+        return UInt(nextCount) <= maxCharactersCount
+    }
+
+}
+
+// MARK: ExpandableTextViewPlaceholderDelegate
+extension CustomChatInputBar: ExpandableTextViewPlaceholderDelegate {
+    public func expandableTextViewDidShowPlaceholder(_ textView: ExpandableTextView) {
+//        self.delegate?.inputBarDidShowPlaceholder(self)
+    }
+
+    public func expandableTextViewDidHidePlaceholder(_ textView: ExpandableTextView) {
+//        self.delegate?.inputBarDidHidePlaceholder(self)
+    }
+}
+
+
 class DemoChatViewController: BaseChatViewController {
     var shouldUseAlternativePresenter: Bool = false
+    var shouldCenterInputItems: Bool = false
 
     var messageSender: DemoChatMessageSender!
     let messagesSelector = BaseMessagesSelector()
@@ -53,7 +163,8 @@ class DemoChatViewController: BaseChatViewController {
 
     var chatInputPresenter: AnyObject!
     override func createChatInputView() -> UIView {
-        let chatInputView = ChatInputBar.loadNib()
+        //let chatInputView = ChatInputBar(frame: .zero)
+        let chatInputView = CustomChatInputBar(frame: .zero)
         var appearance = ChatInputBarAppearance()
         appearance.sendButtonAppearance.title = NSLocalizedString("Send", comment: "")
         appearance.textInputAppearance.placeholderText = NSLocalizedString("Type a message", comment: "")
