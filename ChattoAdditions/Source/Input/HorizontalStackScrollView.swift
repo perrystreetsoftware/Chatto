@@ -26,62 +26,64 @@ import UIKit
 
 open class HorizontalStackScrollView: UIScrollView {
 
+    enum ItemLayout {
+        case leading
+        case fill
+    }
+
     private var arrangedViews: [UIView] = []
-    private var arrangedViewContraints: [NSLayoutConstraint] = []
+    private let arrangedViewsHolderView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        return stackView
+    }()
+
     var interItemSpacing: CGFloat = 0.0 {
         didSet {
-            self.setNeedsUpdateConstraints()
+            arrangedViewsHolderView.spacing = interItemSpacing
         }
+    }
+
+    var itemLayout: ItemLayout = .leading {
+        didSet {
+            switch itemLayout {
+            case .leading:
+                arrangedViewsHolderView.distribution = .fill
+                pinWidthOfStackViewToParentScrollViewConstraint.isActive = false
+            case .fill:
+                arrangedViewsHolderView.distribution = .fillEqually
+                pinWidthOfStackViewToParentScrollViewConstraint.isActive = true
+            }
+        }
+    }
+
+    private var pinWidthOfStackViewToParentScrollViewConstraint: NSLayoutConstraint!
+
+    public override init(frame: CGRect) {
+        super.init(frame: .zero)
+        layoutStackView()
+    }
+
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        layoutStackView()
+    }
+
+    private func layoutStackView() {
+        addSubview(arrangedViewsHolderView)
+        arrangedViewsHolderView.translatesAutoresizingMaskIntoConstraints = false
+        arrangedViewsHolderView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        arrangedViewsHolderView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        arrangedViewsHolderView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        arrangedViewsHolderView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        pinWidthOfStackViewToParentScrollViewConstraint = arrangedViewsHolderView.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor)
+        arrangedViewsHolderView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
     }
 
     func addArrangedViews(_ views: [UIView]) {
         for view in views {
-            view.translatesAutoresizingMaskIntoConstraints = false
-            self.addSubview(view)
+            arrangedViewsHolderView.addArrangedSubview(view)
         }
         self.arrangedViews.append(contentsOf: views)
-        self.setNeedsUpdateConstraints()
-    }
-
-    override open func updateConstraints() {
-        super.updateConstraints()
-        self.removeConstraintsForArrangedViews()
-        self.addConstraintsForArrengedViews()
-    }
-
-    private func removeConstraintsForArrangedViews() {
-        for constraint in self.arrangedViewContraints {
-            self.removeConstraint(constraint)
-        }
-        self.arrangedViewContraints.removeAll()
-    }
-
-    private func addConstraintsForArrengedViews() {
-        for (index, view) in arrangedViews.enumerated() {
-            switch index {
-            case 0:
-                let constraint = NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0)
-                self.addConstraint(constraint)
-                self.arrangedViewContraints.append(constraint)
-            case arrangedViews.count-1:
-                let constraint = NSLayoutConstraint(item: view, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: 0)
-                self.addConstraint(constraint)
-                self.arrangedViewContraints.append(constraint)
-                fallthrough
-            default:
-                let constraint = NSLayoutConstraint(item: view, attribute: .leading, relatedBy: .equal, toItem: arrangedViews[index-1], attribute: .trailing, multiplier: 1, constant: self.interItemSpacing)
-                self.addConstraint(constraint)
-                self.arrangedViewContraints.append(constraint)
-            }
-            let constraintTop = NSLayoutConstraint(item: view, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0)
-            self.addConstraint(constraintTop)
-            let constraintBottom = NSLayoutConstraint(item: view, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0)
-            self.addConstraint(constraintBottom)
-
-            // when you constrain center, instead of pinning top and bottom,
-            // there is a consraint violation
-
-            // self.addConstraint(NSLayoutConstraint(item: view, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
-        }
     }
 }

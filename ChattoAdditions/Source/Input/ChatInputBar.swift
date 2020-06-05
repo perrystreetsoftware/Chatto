@@ -37,8 +37,18 @@ public protocol ChatInputBarDelegate: class {
     func inputBarDidHidePlaceholder(_ inputBar: ChatInputBar)
 }
 
-@objc
-open class ChatInputBar: ReusableXibView {
+public protocol ChatInputBarProtocol: UIView {
+    var showsTextView: Bool { get set }
+    var showsSendButton: Bool { get set }
+    var inputText: String { get set }
+    var inputTextView: UITextView { get }
+    func setAppearance(_ appearance: ChatInputBarAppearance)
+    var inputItems: [ChatInputItemProtocol] { get set }
+    var presenter: ChatInputBarPresenter? { get set } // make this weak
+    var maxCharactersCount: UInt? { get set } // nil -> unlimited
+}
+
+open class ChatInputBar: UIView, ChatInputBarProtocol {
 
     public var pasteActionInterceptor: PasteActionInterceptor? {
         get { return self.textView.pasteActionInterceptor }
@@ -46,42 +56,61 @@ open class ChatInputBar: ReusableXibView {
     }
 
     public weak var delegate: ChatInputBarDelegate?
-    weak var presenter: ChatInputBarPresenter?
+    weak public var presenter: ChatInputBarPresenter?
 
-    open var shouldEnableSendButton: Bool {
-        return !textView.text.isEmpty
+    public var shouldEnableSendButton = { (inputBar: ChatInputBar) -> Bool in
+        return !inputBar.textView.text.isEmpty
     }
 
-    public var inputTextView: UITextView? {
+    public var inputTextView: UITextView {
         return self.textView
     }
 
-    @IBOutlet weak var scrollView: HorizontalStackScrollView!
-    @IBOutlet weak var textView: ExpandableTextView!
-    @IBOutlet weak var sendButton: UIButton!
-    @IBOutlet weak var topBorderHeightConstraint: NSLayoutConstraint!
+    let scrollView: HorizontalStackScrollView = {
+        return HorizontalStackScrollView()
+    }()
 
-    @IBOutlet var constraintsForHiddenTextView: [NSLayoutConstraint]!
-    @IBOutlet var constraintsForVisibleTextView: [NSLayoutConstraint]!
+    let textView: ExpandableTextView = {
+        return ExpandableTextView()
+    }()
 
-    @IBOutlet var constraintsForVisibleSendButton: [NSLayoutConstraint]!
-    @IBOutlet var constraintsForHiddenSendButton: [NSLayoutConstraint]!
-    @IBOutlet var tabBarContainerHeightConstraint: NSLayoutConstraint!
+    let sendButton: UIButton = {
+        return UIButton(type: .custom)
+    }()
 
-    class open func loadNib() -> ChatInputBar {
-        let view = Bundle(for: self).loadNibNamed(self.nibName(), owner: nil, options: nil)!.first as! ChatInputBar
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.frame = CGRect.zero
-        return view
-    }
+    let topBorderView: UIView = {
+        let topBorderView = UIView()
+        topBorderView.translatesAutoresizingMaskIntoConstraints = false
+        topBorderView.backgroundColor = UIColor(white: 0.6, alpha: 1)
+        return topBorderView
+    }()
 
-    override class func nibName() -> String {
-        return "ChatInputBar"
-    }
+    private var tabbBarHeightConstraint: NSLayoutConstraint!
 
-    open override func awakeFromNib() {
-        super.awakeFromNib()
-        self.topBorderHeightConstraint.constant = 1 / UIScreen.main.scale
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        translatesAutoresizingMaskIntoConstraints = false
+        let rootStackView = UIStackView()
+        rootStackView.axis = .vertical
+        rootStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(rootStackView)
+        rootStackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        rootStackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        rootStackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        rootStackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+
+        rootStackView.addArrangedSubview(topBorderView)
+        rootStackView.addArrangedSubview(textView)
+
+        let scrollViewSendButtonStackView = UIStackView(arrangedSubviews: [scrollView, sendButton])
+        scrollViewSendButtonStackView.axis = .horizontal
+        rootStackView.addArrangedSubview(scrollViewSendButtonStackView)
+
+        tabbBarHeightConstraint =  scrollView.heightAnchor.constraint(equalToConstant: 44)
+        tabbBarHeightConstraint.isActive = true
+
+        self.topBorderView.heightAnchor.constraint(equalToConstant: 1 / UIScreen.main.scale).isActive = true
         self.textView.scrollsToTop = false
         self.textView.delegate = self
         self.textView.placeholderDelegate = self
@@ -89,36 +118,20 @@ open class ChatInputBar: ReusableXibView {
         self.sendButton.isEnabled = false
     }
 
-    open override func updateConstraints() {
-        if self.showsTextView {
-            NSLayoutConstraint.activate(self.constraintsForVisibleTextView)
-            NSLayoutConstraint.deactivate(self.constraintsForHiddenTextView)
-        } else {
-            NSLayoutConstraint.deactivate(self.constraintsForVisibleTextView)
-            NSLayoutConstraint.activate(self.constraintsForHiddenTextView)
-        }
-        if self.showsSendButton {
-            NSLayoutConstraint.deactivate(self.constraintsForHiddenSendButton)
-            NSLayoutConstraint.activate(self.constraintsForVisibleSendButton)
-        } else {
-            NSLayoutConstraint.deactivate(self.constraintsForVisibleSendButton)
-            NSLayoutConstraint.activate(self.constraintsForHiddenSendButton)
-        }
-        super.updateConstraints()
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     open var showsTextView: Bool = true {
         didSet {
-            self.setNeedsUpdateConstraints()
-            self.setNeedsLayout()
+            textView.isHidden = !showsTextView
             self.updateIntrinsicContentSizeAnimated()
         }
     }
 
     open var showsSendButton: Bool = true {
         didSet {
-            self.setNeedsUpdateConstraints()
-            self.setNeedsLayout()
+            sendButton.isHidden = !showsSendButton
             self.updateIntrinsicContentSizeAnimated()
         }
     }
@@ -133,12 +146,7 @@ open class ChatInputBar: ReusableXibView {
         }, completion: nil)
     }
 
-    open override func layoutSubviews() {
-        self.updateConstraints() // Interface rotation or size class changes will reset constraints as defined in interface builder -> constraintsForVisibleTextView will be activated
-        super.layoutSubviews()
-    }
-
-    open var inputItems = [ChatInputItemProtocol]() {
+    public var inputItems = [ChatInputItemProtocol]() {
         didSet {
             let inputItemViews = self.inputItems.map { (item: ChatInputItemProtocol) -> ChatInputItemView in
                 let inputItemView = ChatInputItemView()
@@ -189,10 +197,10 @@ open class ChatInputBar: ReusableXibView {
     }
 
     fileprivate func updateSendButton() {
-        self.sendButton.isEnabled = self.shouldEnableSendButton
+        self.sendButton.isEnabled = self.shouldEnableSendButton(self)
     }
 
-    @IBAction public func buttonTapped(_ sender: AnyObject) {
+    @IBAction func buttonTapped(_ sender: AnyObject) {
         self.presenter?.onSendButtonPressed()
         self.delegate?.inputBarSendButtonPressed(self)
     }
@@ -244,7 +252,7 @@ extension ChatInputBar {
         }
         self.sendButton.titleLabel?.font = appearance.sendButtonAppearance.font
         self.sendButton.accessibilityIdentifier = appearance.sendButtonAppearance.accessibilityIdentifier
-        self.tabBarContainerHeightConstraint.constant = appearance.tabBarAppearance.height
+        self.tabbBarHeightConstraint.constant = appearance.tabBarAppearance.height
     }
 }
 
@@ -289,7 +297,7 @@ extension ChatInputBar: UITextViewDelegate {
         self.delegate?.inputBarDidChangeText(self)
     }
 
-    open func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {
+    public func textView(_ textView: UITextView, shouldChangeTextIn nsRange: NSRange, replacementText text: String) -> Bool {
         guard let maxCharactersCount = self.maxCharactersCount else { return true }
         let currentText: NSString = textView.text as NSString
         let currentCount = currentText.length

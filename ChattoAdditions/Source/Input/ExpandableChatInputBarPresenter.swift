@@ -26,14 +26,14 @@ import Chatto
 
 @objc
 public class ExpandableChatInputBarPresenter: NSObject, ChatInputBarPresenter {
-    public let chatInputBar: ChatInputBar
+    public let chatInputBar: ChatInputBarProtocol
     let chatInputItems: [ChatInputItemProtocol]
     let notificationCenter: NotificationCenter
 
     weak var inputPositionController: InputPositionControlling?
 
     public init(inputPositionController: InputPositionControlling,
-                chatInputBar: ChatInputBar,
+                chatInputBar: ChatInputBarProtocol,
                 chatInputItems: [ChatInputItemProtocol],
                 chatInputBarAppearance: ChatInputBarAppearance,
                 notificationCenter: NotificationCenter = NotificationCenter.default) {
@@ -57,7 +57,7 @@ public class ExpandableChatInputBarPresenter: NSObject, ChatInputBarPresenter {
         self.notificationCenter.removeObserver(self)
     }
 
-    fileprivate(set) var focusedItem: ChatInputItemProtocol? {
+    fileprivate(set) public var focusedItem: ChatInputItemProtocol? {
         willSet {
             self.focusedItem?.selected = false
         }
@@ -69,7 +69,7 @@ public class ExpandableChatInputBarPresenter: NSObject, ChatInputBarPresenter {
     fileprivate var shouldIgnoreContainerBottomMarginUpdates: Bool = false
     fileprivate func updateContentContainer(withInputItem inputItem: ChatInputItemProtocol) {
         self.cleanCurrentInputView()
-        let responder = self.chatInputBar.textView!
+        let responder = self.chatInputBar.inputTextView
         if inputItem.presentationMode == .keyboard {
             responder.becomeFirstResponder()
         } else if let inputView = inputItem.inputView, let inputPositionController = self.inputPositionController {
@@ -253,7 +253,7 @@ extension ExpandableChatInputBarPresenter {
             guard self.focusedItem?.presentationMode == .keyboard else { return }
         }
         self.focusedItem = nil
-        self.chatInputBar.textView.inputView = nil
+        self.chatInputBar.inputTextView.inputView = nil
         self.chatInputBar.showsTextView = true
         self.chatInputBar.showsSendButton = true
     }
@@ -265,7 +265,7 @@ extension ExpandableChatInputBarPresenter {
         }
     }
 
-    func onSendButtonPressed() {
+    public func onSendButtonPressed() {
         if let focusedItem = self.focusedItem {
             focusedItem.handleInput(self.chatInputBar.inputText as AnyObject)
         } else if let keyboardItem = self.firstKeyboardInputItem() {
@@ -274,7 +274,7 @@ extension ExpandableChatInputBarPresenter {
         self.chatInputBar.inputText = ""
     }
 
-    func onDidReceiveFocusOnItem(_ item: ChatInputItemProtocol) {
+    public func onDidReceiveFocusOnItem(_ item: ChatInputItemProtocol) {
         guard item.presentationMode != .none else { return }
         guard item !== self.focusedItem else { return }
 
