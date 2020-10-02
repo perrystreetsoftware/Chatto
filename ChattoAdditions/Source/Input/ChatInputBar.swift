@@ -56,7 +56,7 @@ open class ChatInputBar: ReusableXibView {
         return self.textView
     }
 
-    @IBOutlet weak var scrollView: HorizontalStackScrollView!
+    @IBOutlet public weak var scrollView: UIStackView!
     @IBOutlet weak var textView: ExpandableTextView!
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var topBorderHeightConstraint: NSLayoutConstraint!
@@ -85,7 +85,6 @@ open class ChatInputBar: ReusableXibView {
         self.textView.scrollsToTop = false
         self.textView.delegate = self
         self.textView.placeholderDelegate = self
-        self.scrollView.scrollsToTop = false
         self.sendButton.isEnabled = false
     }
 
@@ -140,13 +139,30 @@ open class ChatInputBar: ReusableXibView {
 
     open var inputItems = [ChatInputItemProtocol]() {
         didSet {
-            let inputItemViews = self.inputItems.map { (item: ChatInputItemProtocol) -> ChatInputItemView in
-                let inputItemView = ChatInputItemView()
-                inputItemView.inputItem = item
-                inputItemView.delegate = self
-                return inputItemView
-            }
-            self.scrollView.addArrangedViews(inputItemViews)
+            configureInputItems()
+        }
+    }
+
+    open func configureInputItems() {
+        let inputItemViews = self.inputItems.map { (item: ChatInputItemProtocol) -> UIView in
+            let inputItemView = ChatInputItemView()
+            inputItemView.inputItem = item
+            inputItemView.delegate = self
+
+            // We must center our ChatInputItemViews in a container view
+            // and then give our ChatInputItemView square dimensions,
+            // otherwise the scaling breaks
+            let containerView = UIView(frame: .zero)
+            containerView.addSubview(inputItemView)
+            inputItemView.frame = CGRect(origin: CGPoint.zero, size: CGSize(width: self.scrollView.frame.size.height, height: self.scrollView.frame.size.height))
+            inputItemView.center = containerView.center
+            inputItemView.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
+
+            return containerView
+        }
+
+        inputItemViews.forEach { (subview) in
+            self.scrollView.addArrangedSubview(subview)
         }
     }
 
@@ -235,8 +251,6 @@ extension ChatInputBar {
         self.textView.layer.borderColor = appearance.textInputAppearance.borderColor.cgColor
         self.textView.layer.borderWidth = appearance.textInputAppearance.borderWidth
         self.textView.accessibilityIdentifier = appearance.textInputAppearance.accessibilityIdentifier
-        self.tabBarInterItemSpacing = appearance.tabBarAppearance.interItemSpacing
-        self.tabBarContentInsets = appearance.tabBarAppearance.contentInsets
         self.sendButton.contentEdgeInsets = appearance.sendButtonAppearance.insets
         self.sendButton.setTitle(appearance.sendButtonAppearance.title, for: .normal)
         appearance.sendButtonAppearance.titleColors.forEach { (state, color) in
@@ -245,26 +259,6 @@ extension ChatInputBar {
         self.sendButton.titleLabel?.font = appearance.sendButtonAppearance.font
         self.sendButton.accessibilityIdentifier = appearance.sendButtonAppearance.accessibilityIdentifier
         self.tabBarContainerHeightConstraint.constant = appearance.tabBarAppearance.height
-    }
-}
-
-extension ChatInputBar { // Tabar
-    public var tabBarInterItemSpacing: CGFloat {
-        get {
-            return self.scrollView.interItemSpacing
-        }
-        set {
-            self.scrollView.interItemSpacing = newValue
-        }
-    }
-
-    public var tabBarContentInsets: UIEdgeInsets {
-        get {
-            return self.scrollView.contentInset
-        }
-        set {
-            self.scrollView.contentInset = newValue
-        }
     }
 }
 
