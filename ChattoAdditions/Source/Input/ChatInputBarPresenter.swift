@@ -159,7 +159,7 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
 
 // MARK: ChatInputBarPresenter
 extension BasicChatInputBarPresenter {
-    public func onDidEndEditing() {
+    @objc open func onDidEndEditing() {
         self.focusedItem = nil
         self.chatInputBar.textView.inputView = nil
         self.chatInputBar.showsTextView = true
