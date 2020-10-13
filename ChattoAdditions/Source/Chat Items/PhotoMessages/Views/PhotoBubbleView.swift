@@ -36,6 +36,17 @@ public protocol PhotoBubbleViewStyleProtocol {
     func overlayColor(viewModel: PhotoMessageViewModelProtocol) -> UIColor?
 }
 
+// pss added this, so we could use non-UIImageView-based
+// view classes for messages that contained image content
+public protocol PhotoViewImplementing: UIView {
+    var image: UIImage? { get set }
+}
+
+// Our default implementation does use a UIImageView, which
+// of course supports assignment of the image attribute
+extension UIImageView: PhotoViewImplementing {
+}
+
 open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSizingQueryable {
 
     public var viewContext: ViewContext = .normal
@@ -59,8 +70,14 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         self.addSubview(self.progressIndicatorView)
     }
 
-    public private(set) lazy var imageView: UIImageView = {
+    open func createPhotoViewImplementing() -> PhotoViewImplementing {
         let imageView = UIImageView()
+
+        return imageView
+    }
+
+    public private(set) lazy var imageView: PhotoViewImplementing = {
+        let imageView = createPhotoViewImplementing()
         imageView.autoresizingMask = []
         imageView.clipsToBounds = true
         imageView.autoresizesSubviews = false
