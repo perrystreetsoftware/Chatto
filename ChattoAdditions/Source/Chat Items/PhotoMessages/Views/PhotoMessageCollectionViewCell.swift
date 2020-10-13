@@ -34,7 +34,7 @@ open class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBu
         return cell
     }
 
-    public override func createBubbleView() -> PhotoBubbleView {
+    open override func createBubbleView() -> PhotoBubbleView {
         return PhotoBubbleView()
     }
 
