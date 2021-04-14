@@ -61,8 +61,8 @@ open class ChatInputBar: ReusableXibView {
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var topBorderHeightConstraint: NSLayoutConstraint!
 
-    @IBOutlet var constraintsForHiddenTextView: [NSLayoutConstraint]!
-    @IBOutlet var constraintsForVisibleTextView: [NSLayoutConstraint]!
+    @IBOutlet public var constraintsForHiddenTextView: [NSLayoutConstraint]!
+    @IBOutlet public var constraintsForVisibleTextView: [NSLayoutConstraint]!
 
     @IBOutlet var constraintsForVisibleSendButton: [NSLayoutConstraint]!
     @IBOutlet var constraintsForHiddenSendButton: [NSLayoutConstraint]!
