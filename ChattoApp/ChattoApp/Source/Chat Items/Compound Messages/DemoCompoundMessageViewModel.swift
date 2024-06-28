@@ -24,6 +24,14 @@
 import ChattoAdditions
 
 final class DemoCompoundMessageViewModel: DecoratedMessageViewModelProtocol {
+    public func copy() -> any MessageViewModelProtocol {
+        let theCopy = messageViewModel.copy()
+
+        return DemoCompoundMessageViewModel(message: self.messageModel as! DemoCompoundMessageModel, messageViewModel: theCopy)
+    }
+
+    var replyText: String? = nil
+    var replyImage: UIImage? = nil
 
     init(message: DemoCompoundMessageModel, messageViewModel: MessageViewModelProtocol) {
         self.messageViewModel = messageViewModel

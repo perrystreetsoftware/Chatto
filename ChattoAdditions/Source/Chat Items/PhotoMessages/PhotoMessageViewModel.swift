@@ -47,6 +47,17 @@ public protocol PhotoMessageViewModelProtocol: DecoratedMessageViewModelProtocol
 }
 
 open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>: PhotoMessageViewModelProtocol {
+    public func copy() -> any MessageViewModelProtocol {
+        let theCopy = messageViewModel.copy()
+
+        return PhotoMessageViewModel(photoMessage: _photoMessage,
+                                     messageViewModel: theCopy)
+    }
+    
+    public var replyText: String? = "Photo from Bruno"
+
+    public var replyImage: UIImage? = nil
+    
     public var photoMessage: PhotoMessageModelProtocol {
         return self._photoMessage
     }

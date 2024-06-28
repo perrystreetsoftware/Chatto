@@ -37,6 +37,9 @@ public protocol MessageModelProtocol: ChatItemProtocol {
     var date: Date { get }
     var status: MessageStatus { get }
     var canReply: Bool { get }
+
+    var replyText: String? { get }
+    var replyImage: UIImage? { get }
 }
 
 extension MessageModelProtocol {
@@ -81,6 +84,8 @@ open class MessageModel: MessageModelProtocol {
     open var date: Date
     open var status: MessageStatus
     open var canReply: Bool
+    open var replyText: String?
+    open var replyImage: UIImage?
 
     public init(uid: String,
                 senderId: String,
@@ -88,7 +93,9 @@ open class MessageModel: MessageModelProtocol {
                 isIncoming: Bool,
                 date: Date,
                 status: MessageStatus,
-                canReply: Bool = false) {
+                canReply: Bool = false,
+                replyText: String? = nil,
+                replyImage: UIImage? = nil) {
         self.uid = uid
         self.senderId = senderId
         self.type = type
@@ -96,5 +103,7 @@ open class MessageModel: MessageModelProtocol {
         self.date = date
         self.status = status
         self.canReply = canReply
+        self.replyText = replyText
+        self.replyImage = replyImage
     }
 }

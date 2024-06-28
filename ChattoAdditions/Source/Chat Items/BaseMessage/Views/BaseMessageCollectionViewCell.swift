@@ -117,6 +117,11 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         }
     }
 
+    open var replyViewModel: ReplyViewModelProtocol = NoReplyViewModel() {
+        didSet {
+        }
+    }
+
     public var baseStyle: BaseMessageCollectionViewCellStyleProtocol! {
         didSet {
             self.updateViews()
@@ -140,6 +145,11 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
 
     open var canCalculateSizeInBackground: Bool {
         return self.bubbleView.canCalculateSizeInBackground
+    }
+
+    public private(set) var replyView: ReplyView?
+    open func createReplyView() -> ReplyView? {
+        return nil
     }
 
     public private(set) var bubbleView: BubbleViewType!
@@ -194,6 +204,8 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
     private func commonInit() {
         self.avatarView = self.createAvatarView()
         self.avatarView.addGestureRecognizer(self.avatarTapGestureRecognizer)
+        self.replyView = self.createReplyView()
+
         self.bubbleView = self.createBubbleView()
         self.bubbleView.isExclusiveTouch = true
         self.bubbleView.addGestureRecognizer(self.tapGestureRecognizer)
@@ -203,6 +215,9 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         self.tapGestureRecognizer.require(toFail: self.doubleTapGestureRecognizer)
         self.contentView.addSubview(self.avatarView)
         self.contentView.addSubview(self.bubbleView)
+        if let replyView = self.replyView {
+            self.contentView.addSubview(replyView)
+        }
         self.contentView.addSubview(self.failedButton)
         self.contentView.addSubview(self.selectionIndicator)
         self.contentView.addSubview(self.replyIndicator)
@@ -332,6 +347,9 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         let layout = self.calculateLayout(availableWidth: self.contentView.bounds.width)
         self.failedButton.bma_rect = layout.failedButtonFrame
         if !self.useAutolayoutForBubbleView {
+            self.replyView?.bma_rect = layout.replyFrame
+            self.replyView?.layoutIfNeeded()
+
             self.bubbleView.bma_rect = layout.bubbleViewFrame
             self.bubbleView.preferredMaxLayoutWidth = layout.preferredMaxWidthForBubble
             self.bubbleView.layoutIfNeeded()
@@ -385,6 +403,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
             horizontalInterspacing: layoutConstants.horizontalInterspacing,
             maxContainerWidthPercentageForBubbleView: layoutConstants.maxContainerWidthPercentageForBubbleView,
             bubbleView: self.bubbleView,
+            replyView: self.replyView,
             isIncoming: self.messageViewModel.isIncoming,
             isShowingFailedButton: self.shouldShowFailedIcon,
             failedButtonSize: self.baseStyle.failedIcon.size,
@@ -562,6 +581,7 @@ private struct Layout {
     private (set) var avatarViewFrame = CGRect.zero
     private (set) var selectionIndicatorFrame = CGRect.zero
     private (set) var preferredMaxWidthForBubble: CGFloat = 0
+    private (set) var replyFrame: CGRect = .zero
 
     mutating func calculateLayout(parameters: LayoutParameters) {
         let containerWidth = parameters.containerWidth
@@ -576,12 +596,23 @@ private struct Layout {
 
         let preferredWidthForBubble = (containerWidth * parameters.maxContainerWidthPercentageForBubbleView).bma_round()
         let bubbleSize = bubbleView.sizeThatFits(CGSize(width: preferredWidthForBubble, height: .greatestFiniteMagnitude))
-        let containerRect = CGRect(origin: CGPoint.zero, size: CGSize(width: containerWidth, height: bubbleSize.height))
+
+        let replySize = {
+            if let replyView = parameters.replyView {
+                return replyView.sizeThatFits(CGSize(width: preferredWidthForBubble, height: .greatestFiniteMagnitude))
+            } else {
+                return CGSize.zero
+            }
+        }()
+
+        let containerRect = CGRect(origin: CGPoint.zero, size: CGSize(width: containerWidth, height: bubbleSize.height + replySize.height))
+
+        self.replyFrame = replySize.bma_rect(inContainer: containerRect, xAlignament: isIncoming ? .left : .right, yAlignment: .top)
 
         self.bubbleViewFrame = bubbleSize.bma_rect(
             inContainer: containerRect,
             xAlignament: .center,
-            yAlignment: .center
+            yAlignment: .bottom
         )
 
         self.failedButtonFrame = failedButtonSize.bma_rect(
@@ -656,6 +687,7 @@ private struct LayoutParameters {
     let horizontalInterspacing: CGFloat
     let maxContainerWidthPercentageForBubbleView: CGFloat // in [0, 1]
     let bubbleView: UIView
+    let replyView: UIView?
     let isIncoming: Bool
     let isShowingFailedButton: Bool
     let failedButtonSize: CGSize

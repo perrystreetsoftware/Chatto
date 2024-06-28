@@ -53,8 +53,12 @@ public protocol MessageViewModelProtocol: class { // why class? https://gist.git
     var avatarImage: Observable<UIImage?> { get set }
     var messageContentTransferStatus: TransferStatus? { get set }
     var canReply: Bool { get }
+    var replyText: String? { get }
+    var replyImage: UIImage? { get }
     func willBeShown() // Optional
     func wasHidden() // Optional
+
+    func copy() -> MessageViewModelProtocol
 }
 
 extension MessageViewModelProtocol {
@@ -123,6 +127,15 @@ extension DecoratedMessageViewModelProtocol {
 }
 
 open class MessageViewModel: MessageViewModelProtocol {
+    open func copy() -> any MessageViewModelProtocol {
+        return MessageViewModel(dateFormatter: self.dateFormatter,
+                                messageModel: self.messageModel,
+                                avatarImage: nil,
+                                decorationAttributes: self.decorationAttributes)
+    }
+
+    open var replyText: String? { return nil }
+    open var replyImage: UIImage? { return nil }
 
     open var canReply: Bool { self.messageModel.canReply }
 

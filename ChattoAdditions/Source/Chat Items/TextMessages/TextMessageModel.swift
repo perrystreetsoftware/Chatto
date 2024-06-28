@@ -30,6 +30,14 @@ public protocol TextMessageModelProtocol: DecoratedMessageModelProtocol, Content
 }
 
 open class TextMessageModel<MessageModelT: MessageModelProtocol>: TextMessageModelProtocol {
+    public var replyText: String? {
+        self.messageModel.replyText
+    }
+
+    public var replyImage: UIImage? {
+        self.messageModel.replyImage
+    }
+
     public var messageModel: MessageModelProtocol {
         return self._messageModel
     }

@@ -25,6 +25,14 @@ import Chatto
 import ChattoAdditions
 
 final class DemoCompoundMessageModel: Equatable, DecoratedMessageModelProtocol, DemoMessageModelProtocol {
+    var replyText: String? {
+        self.messageModel.replyText
+    }
+
+    var replyImage: UIImage? {
+        self.messageModel.replyImage
+    }
+
 
     // MARK: - Instantiation
 
