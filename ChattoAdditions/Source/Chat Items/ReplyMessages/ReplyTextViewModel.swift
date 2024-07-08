@@ -32,7 +32,7 @@ public final class ReplyTextViewModel: TextMessageViewModelProtocol {
     }
 
     public var text: String {
-        "Reply from \(messageViewModel.replyText ?? "")"
+        messageViewModel.replyText ?? ""
     }
 
     public var cellAccessibilityIdentifier: String = "reply.cell"

@@ -24,8 +24,14 @@
 
 import Foundation
 
-public final class ReplyView: UIView {
+public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     public var viewModel: MessageViewModelProtocol! {
+        didSet {
+            self.updateViews()
+        }
+    }
+    
+    public var baseStyle: BaseMessageCollectionViewCellStyleProtocol! {
         didSet {
             self.updateViews()
         }
@@ -49,6 +55,13 @@ public final class ReplyView: UIView {
                                                                                                                                     avatarImage: nil,
                                                                                                                                     decorationAttributes: BaseMessageDecorationAttributes()))
     }
+
+    private var isIncoming: Bool {
+        viewModel?.isIncoming == true
+    }
+    
+    private let indicatorHorizontalMargin: CGFloat = 4
+    private let indicator = UIImageView()
 
     private lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
@@ -77,6 +90,8 @@ public final class ReplyView: UIView {
         return bubbleView
     }()
 
+    public var preferredMaxLayoutWidth: CGFloat = 0
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.commonInit()
@@ -90,15 +105,16 @@ public final class ReplyView: UIView {
     private func commonInit() {
         self.addSubview(self.textBubbleView)
         self.addSubview(self.photoBubbleView)
+        self.addSubview(self.indicator)
     }
 
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
         if self.isImageReply {
             self.setupPhotoBubbleView()
-            return self.photoBubbleView.frame.size
+            return self.photoBubbleView.sizeThatFits(size)
         } else if self.isTextReply {
             self.setupTextBubbleView()
-            return self.textBubbleView.frame.size
+            return self.textBubbleView.sizeThatFits(size)
         } else {
             return .zero
         }
@@ -107,19 +123,44 @@ public final class ReplyView: UIView {
     // MARK: Layout
     public override func layoutSubviews() {
         super.layoutSubviews()
+        
+        var currentX: CGFloat = 0
+        indicator.center.y = frame.height / 2
+        
         if self.isImageReply {
             setupPhotoBubbleView()
             self.photoBubbleView.isHidden = false
-
             self.textBubbleView.isHidden = true
+            self.indicator.isHidden = false
+            
+            self.photoBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
         } else if self.isTextReply {
             setupTextBubbleView()
             self.textBubbleView.isHidden = false
-
             self.photoBubbleView.isHidden = true
+            self.indicator.isHidden = false
+            
+            self.textBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
         } else {
+            self.indicator.isHidden = true
             self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
+        }
+        
+        if isIncoming {
+            indicator.frame.origin.x = currentX
+            currentX += indicator.frame.width + indicatorHorizontalMargin
+            textBubbleView.frame.origin.x = currentX
+            photoBubbleView.frame.origin.x = currentX
+        } else {
+            let bubbleView: UIView = textBubbleView.isHidden ? photoBubbleView : textBubbleView
+            currentX = bubbleView.frame.maxX - (indicator.frame.width + 8)
+            currentX -= indicator.frame.width
+            indicator.frame.origin.x = currentX
+            
+            currentX -= bubbleView.frame.width
+            textBubbleView.frame.origin.x = currentX
+            photoBubbleView.frame.origin.x = currentX
         }
     }
 
@@ -133,6 +174,23 @@ public final class ReplyView: UIView {
             let replyTextViewModel = ReplyTextViewModel(messageViewModel: self.viewModel)
             self.textBubbleView.textMessageViewModel = replyTextViewModel
         }
+        
+        if let indicatorStyle = baseStyle?.replyIndicatorStyle {
+            if self.viewModel?.isIncoming == true {
+                let transform = CATransform3DRotate(
+                    CATransform3DIdentity,
+                    .pi,
+                    0,
+                    1,
+                    0
+                )
+                
+                indicator.layer.transform = transform
+            }
+            
+            indicator.image = indicatorStyle.image
+            indicator.bounds.size = indicatorStyle.size
+        }
     }
 
     private var isImageReply: Bool {
@@ -144,21 +202,19 @@ public final class ReplyView: UIView {
     }
 
     private func setupTextBubbleView() {
-        let computedMaxBubbleWidth = self.frame.width
+        textBubbleView.preferredMaxLayoutWidth = preferredMaxLayoutWidth
 
-        textBubbleView.preferredMaxLayoutWidth = computedMaxBubbleWidth
-
-        let size = textBubbleView.systemLayoutSizeFitting(CGSize(width: computedMaxBubbleWidth, height: CGFloat.greatestFiniteMagnitude))
+        let size = textBubbleView.systemLayoutSizeFitting(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
+        
         textBubbleView.frame.size.height = size.height
         textBubbleView.frame.size.width = size.width
     }
 
     private func setupPhotoBubbleView() {
-        let computedMaxBubbleWidth = self.frame.width
+        photoBubbleView.preferredMaxLayoutWidth = preferredMaxLayoutWidth
 
-        photoBubbleView.preferredMaxLayoutWidth = computedMaxBubbleWidth
-
-        let size = photoBubbleView.systemLayoutSizeFitting(CGSize(width: computedMaxBubbleWidth, height: CGFloat.greatestFiniteMagnitude))
+        let size = photoBubbleView.systemLayoutSizeFitting(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
+        
         photoBubbleView.frame.size.height = size.height
         photoBubbleView.frame.size.width = size.width
     }

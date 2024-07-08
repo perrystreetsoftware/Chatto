@@ -121,6 +121,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         didSet {
             self.updateViews()
             self.addBubbleViewConstraintsIfNeeded()
+            self.replyView?.baseStyle = baseStyle
         }
     }
 
@@ -343,6 +344,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         self.failedButton.bma_rect = layout.failedButtonFrame
         if !self.useAutolayoutForBubbleView {
             self.replyView?.bma_rect = layout.replyFrame
+            self.replyView?.preferredMaxLayoutWidth = layout.preferredMaxWidthForBubble
             self.replyView?.layoutIfNeeded()
 
             self.bubbleView.bma_rect = layout.bubbleViewFrame
@@ -654,6 +656,7 @@ private struct Layout {
                 currentX += horizontalInterspacing
             }
             self.bubbleViewFrame.origin.x = currentX
+            self.replyFrame.origin.x = currentX
         } else {
             currentX = containerRect.maxX - horizontalMargin
             currentX -= avatarSize.width
@@ -669,6 +672,7 @@ private struct Layout {
             }
             currentX -= bubbleSize.width
             self.bubbleViewFrame.origin.x = currentX
+            self.replyFrame.origin.x = currentX
         }
 
         self.size = containerRect.size
