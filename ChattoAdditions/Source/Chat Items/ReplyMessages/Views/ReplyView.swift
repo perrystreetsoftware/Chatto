@@ -96,9 +96,11 @@ public final class ReplyView: UIView {
         if self.isImageReply {
             self.setupPhotoBubbleView()
             return self.photoBubbleView.frame.size
-        } else {
+        } else if self.isTextReply {
             self.setupTextBubbleView()
             return self.textBubbleView.frame.size
+        } else {
+            return .zero
         }
     }
 
@@ -110,10 +112,13 @@ public final class ReplyView: UIView {
             self.photoBubbleView.isHidden = false
 
             self.textBubbleView.isHidden = true
-        } else {
+        } else if self.isTextReply {
             setupTextBubbleView()
             self.textBubbleView.isHidden = false
 
+            self.photoBubbleView.isHidden = true
+        } else {
+            self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
         }
     }
@@ -132,6 +137,10 @@ public final class ReplyView: UIView {
 
     private var isImageReply: Bool {
         self.viewModel.replyImage != nil
+    }
+
+    private var isTextReply: Bool {
+        self.viewModel.replyText != nil
     }
 
     private func setupTextBubbleView() {

@@ -100,15 +100,16 @@ class DemoChatMessageFactory {
         var replyText: String? = nil
         var replyImage: UIImage? = nil
         // 50% of the time
-//        if arc4random() % 2 == 0 {
+        let rand = arc4random() % 3
+        if rand == 0 {
 //            if #available(iOS 13.0, *) {
                 replyImage = UIImage(systemName: "trash")
 //            } else {
 //                // Fallback on earlier versions
 //            }
-//        } else {
-//            replyText = "Reply from Bruno"
-//        }
+        } else if rand == 1 {
+            replyText = "Bruno"
+        }
 
         return self.makeTextMessage(uid, text: text, isIncoming: isIncoming, replyText: replyText, replyImage: replyImage)
     }
