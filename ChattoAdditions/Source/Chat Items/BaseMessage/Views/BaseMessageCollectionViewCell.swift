@@ -117,11 +117,6 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         }
     }
 
-    open var replyViewModel: ReplyViewModelProtocol = NoReplyViewModel() {
-        didSet {
-        }
-    }
-
     public var baseStyle: BaseMessageCollectionViewCellStyleProtocol! {
         didSet {
             self.updateViews()

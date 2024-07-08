@@ -24,46 +24,6 @@
 
 import Foundation
 
-public protocol ReplyViewModelProtocol {
-    var message: String? { get }
-    var image: UIImage? { get }
-}
-
-open class NoReplyViewModel: ReplyViewModelProtocol {
-    public var message: String? { return nil }
-    public var image: UIImage? { return nil }
-}
-
-open class PhotoReplyViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>: ReplyViewModelProtocol {
-    private let messageModel: PhotoMessageModelT
-
-    init(messageModel: PhotoMessageModelT) {
-        self.messageModel = messageModel
-    }
-
-    public var message: String? {
-        return nil
-    }
-
-    public var image: UIImage? {
-        return self.messageModel.image
-    }
-}
-
-open class TextReplyViewModel<TextMessageModelT: TextMessageModelProtocol>: ReplyViewModelProtocol {
-    private let messageModel: TextMessageModelT
-
-    init(messageModel: TextMessageModelT) {
-        self.messageModel = messageModel
-    }
-
-    public var message: String? {
-        self.messageModel.text
-    }
-
-    public var image: UIImage? { return nil }
-}
-
 public protocol TextMessageViewModelProtocol: DecoratedMessageViewModelProtocol {
     var text: String { get }
     var cellAccessibilityIdentifier: String { get }
