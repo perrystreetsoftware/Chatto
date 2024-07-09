@@ -108,7 +108,7 @@ class DemoChatMessageFactory {
             let imageModel = makeRandomPhotoMessage(uid, isIncoming: isIncoming)
             reply = imageModel
         } else {
-            let textModel = makeTextMessage(uid, text: "This is a reply text message.", isIncoming: isIncoming)
+            let textModel = makeTextMessage(uid, text: "\(incomingText): This is a reply text message.", isIncoming: isIncoming)
             reply = textModel
         }
 
@@ -117,12 +117,13 @@ class DemoChatMessageFactory {
 
     private class func makeRandomPhotoMessage(_ uid: String, isIncoming: Bool) -> DemoPhotoMessageModel {
         var reply: MessageModelProtocol? = nil
-        
+        let incomingText: String = isIncoming ? "incoming" : "outgoing"
+
         if arc4random_uniform(100) % 2 == 0 {
             let imageModel = makeRandomPhotoMessage(uid, isIncoming: isIncoming)
             reply = imageModel
         } else {
-            let textModel = makeTextMessage(uid, text: "This is a reply text message.", isIncoming: isIncoming)
+            let textModel = makeTextMessage(uid, text: "\(incomingText): This is a reply text message.", isIncoming: isIncoming)
             reply = textModel
         }
         
