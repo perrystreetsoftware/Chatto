@@ -36,45 +36,18 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             self.updateViews()
         }
     }
-
-    static let emptyPhotoMessageModel = PhotoMessageModel(messageModel: MessageModel(uid: "", senderId: "", type: "replyBubbleType", isIncoming: true, date: Date(), status: .success), imageSize: .zero, image: UIImage(systemName: "star")!)
-
-    static var emptyPhotoMessageViewModel: MessageViewModelProtocol {
-        PhotoMessageViewModel(photoMessage: emptyPhotoMessageModel,
-                              messageViewModel: MessageViewModel(dateFormatter: MessageViewModelDefaultBuilder.dateFormatter,
-                                                                 messageModel: emptyTextMessageModel,
-                                                                 avatarImage: nil,
-                                                                 decorationAttributes: BaseMessageDecorationAttributes()))
-    }
-
-    static let emptyTextMessageModel = TextMessageModel(messageModel: MessageModel(uid: "", senderId: "", type: "replyBubbleType", isIncoming: true, date: Date(), status: .success), text: "")
-
-    static var emptyTextMessageViewModel: MessageViewModelProtocol {
-        TextMessageViewModel(textMessage: emptyTextMessageModel, messageViewModel: MessageViewModel(dateFormatter: MessageViewModelDefaultBuilder.dateFormatter,
-                                                                                                                                    messageModel: emptyTextMessageModel,
-                                                                                                                                    avatarImage: nil,
-                                                                                                                                    decorationAttributes: BaseMessageDecorationAttributes()))
-    }
-
-    private var isIncoming: Bool {
-        viewModel?.isIncoming == true
-    }
     
-    private let indicatorHorizontalMargin: CGFloat = 4
-    private let indicator = UIImageView()
-
     private lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
-        bubbleView.photoMessageViewModel = ReplyPhotoMessageViewModel(messageViewModel: Self.emptyPhotoMessageViewModel)
+        bubbleView.photoMessageViewModel = ReplyViewPlaceholder.placeholderPhotoViewModel
         bubbleView.photoMessageStyle = ReplyPhotoStyle()
-
         return bubbleView
     }()
-
-    private lazy var textBubbleView: TextBubbleView = {
+    
+    private let textBubbleView: TextBubbleView = {
         let bubbleView = TextBubbleView()
         bubbleView.layoutCache = NSCache<AnyObject, AnyObject>()
-        bubbleView.textMessageViewModel = ReplyTextViewModel(messageViewModel: Self.emptyTextMessageViewModel)
+        bubbleView.textMessageViewModel = ReplyViewPlaceholder.placeholderTextViewModel
         bubbleView.style = TextMessageCollectionViewCellDefaultStyle(
             bubbleImages: TextMessageCollectionViewCellDefaultStyle.createDefaultBubbleImages(),
             textStyle: TextMessageCollectionViewCellDefaultStyle.TextStyle(
@@ -90,6 +63,13 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         return bubbleView
     }()
 
+    private var isIncoming: Bool {
+        viewModel?.isIncoming == true
+    }
+    
+    private let indicatorHorizontalMargin: CGFloat = 4
+    private let indicator = UIImageView()
+
     public var preferredMaxLayoutWidth: CGFloat = 0
     
     override init(frame: CGRect) {
@@ -103,8 +83,8 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     }
 
     private func commonInit() {
-        self.addSubview(self.textBubbleView)
         self.addSubview(self.photoBubbleView)
+        self.addSubview(self.textBubbleView)
         self.addSubview(self.indicator)
     }
 
@@ -166,25 +146,16 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
 
     private func updateViews() {
         if let viewModel = self.viewModel as? PhotoMessageViewModelProtocol {
-            let replyPhotoViewModel = ReplyPhotoMessageViewModel(messageViewModel: self.viewModel)
-            self.photoBubbleView.photoMessageViewModel = replyPhotoViewModel
+            photoBubbleView.photoMessageViewModel = viewModel
         }
 
         if let viewModel = self.viewModel as? TextMessageViewModelProtocol {
-            let replyTextViewModel = ReplyTextViewModel(messageViewModel: self.viewModel)
-            self.textBubbleView.textMessageViewModel = replyTextViewModel
+            textBubbleView.textMessageViewModel = viewModel
         }
         
         if let indicatorStyle = baseStyle?.replyIndicatorStyle {
             if self.viewModel?.isIncoming == true {
-                let transform = CATransform3DRotate(
-                    CATransform3DIdentity,
-                    .pi,
-                    0,
-                    1,
-                    0
-                )
-                
+                let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
                 indicator.layer.transform = transform
             }
             
@@ -194,11 +165,11 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     }
 
     private var isImageReply: Bool {
-        self.viewModel.replyImage != nil
+        viewModel is PhotoMessageViewModelProtocol
     }
 
     private var isTextReply: Bool {
-        self.viewModel.replyText != nil
+        viewModel is TextMessageViewModelProtocol
     }
 
     private func setupTextBubbleView() {

@@ -23,13 +23,40 @@
 
 
 import Foundation
+import UIKit
 import Chatto
 
-public final class ReplyPhotoStyle: PhotoMessageCollectionViewCellDefaultStyle {
-    override public func bubbleSize(viewModel: any PhotoMessageViewModelProtocol) -> CGSize {
-        let width = viewModel.imageSize.width * 0.5
-        let height = viewModel.imageSize.height * 0.5
+public final class ReplyTextMessageViewModel<TextMessageModelT: TextMessageModelProtocol>: TextMessageViewModelProtocol {
+    public func copy() -> any MessageViewModelProtocol {
+        let theCopy = messageViewModel.copy()
+        return ReplyTextMessageViewModel(textMessage: textMessage, messageViewModel: theCopy)
+    }
 
-        return CGSize(width: width, height: 100)
+    public var reply: MessageViewModelProtocol? = nil
+
+    public var text: String {
+        return self.textMessage.text
+    }
+    
+    public let textMessage: TextMessageModelT
+    public let messageViewModel: MessageViewModelProtocol
+    
+    public let cellAccessibilityIdentifier = "chatto.message.reply.text.cell"
+    public let bubbleAccessibilityIdentifier = "chatto.message.reply.text.bubble"
+
+    public init(
+        textMessage: TextMessageModelT,
+        messageViewModel: MessageViewModelProtocol
+    ) {
+        self.textMessage = textMessage
+        self.messageViewModel = messageViewModel
+    }
+
+    public func willBeShown() {
+        // Need to declare empty. Otherwise subclass code won't execute (as of Xcode 7.2)
+    }
+
+    public func wasHidden() {
+        // Need to declare empty. Otherwise subclass code won't execute (as of Xcode 7.2)
     }
 }

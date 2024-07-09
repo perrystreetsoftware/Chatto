@@ -63,7 +63,7 @@ open class TextMessageCollectionViewCell: BaseMessageCollectionViewCell<TextBubb
             self.accessibilityIdentifier = self.textMessageViewModel.cellAccessibilityIdentifier
             self.messageViewModel = self.textMessageViewModel
             self.bubbleView.textMessageViewModel = self.textMessageViewModel
-            self.replyView?.viewModel = self.textMessageViewModel
+            self.replyView?.viewModel = self.textMessageViewModel.reply
         }
     }
 

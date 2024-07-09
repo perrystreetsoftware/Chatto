@@ -37,6 +37,10 @@ open class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBu
     open override func createBubbleView() -> PhotoBubbleView {
         return PhotoBubbleView()
     }
+    
+    open override func createReplyView() -> ReplyView? {
+        return ReplyView()
+    }
 
     override public var viewContext: ViewContext {
         didSet {
@@ -49,6 +53,7 @@ open class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBu
             self.accessibilityIdentifier = self.photoMessageViewModel.cellAccessibilityIdentifier
             self.messageViewModel = self.photoMessageViewModel
             self.bubbleView.photoMessageViewModel = self.photoMessageViewModel
+            self.replyView?.viewModel = self.photoMessageViewModel.reply
         }
     }
 

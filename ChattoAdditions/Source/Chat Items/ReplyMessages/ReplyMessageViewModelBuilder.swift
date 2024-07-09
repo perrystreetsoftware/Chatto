@@ -23,30 +23,34 @@
 
 
 import Foundation
-import UIKit
 import Chatto
 
-public final class ReplyTextViewModel: TextMessageViewModelProtocol {
-    public func copy() -> any MessageViewModelProtocol {
-        preconditionFailure("Do not copy this")
+public final class ReplyMessageViewModelBuilder {
+    private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+    
+    private let textItemType: ChatItemType
+    private let photoItemType: ChatItemType
+    
+    public init(textItemType: ChatItemType, photoItemType: ChatItemType) {
+        self.textItemType = textItemType
+        self.photoItemType = photoItemType
     }
-
-    public var text: String {
-        messageViewModel.replyText ?? ""
-    }
-
-    public var cellAccessibilityIdentifier: String = "reply.cell"
-
-    public var bubbleAccessibilityIdentifier: String = "reply.bubble"
-
-    public var replyText: String? = nil
-
-    public var replyImage: UIImage? = nil
-
-    public var messageViewModel: any MessageViewModelProtocol
-
-    init(messageViewModel: any MessageViewModelProtocol) {
-        self.messageViewModel = messageViewModel.copy()
-        self.messageViewModel.decorationAttributes = BaseMessageDecorationAttributes()
+    
+    public func createViewModel(_ model: MessageModelProtocol?) -> MessageViewModelProtocol? {
+        guard let model = model else { return nil }
+        
+        let viewModel = messageViewModelBuilder.createMessageViewModel(model)
+        
+        return switch model.type {
+        case textItemType:
+            ReplyTextMessageViewModel(textMessage: model as! TextMessageModel<MessageModel>, messageViewModel: viewModel)
+        case photoItemType:
+            ReplyPhotoMessageViewModel(
+                photoMessage: model as! PhotoMessageModel<MessageModel>,
+                messageViewModel: viewModel
+            )
+        default:
+            nil
+        }
     }
 }

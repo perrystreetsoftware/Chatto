@@ -26,62 +26,52 @@ import Foundation
 import UIKit
 import Chatto
 
-public final class ReplyPhotoMessageViewModel: PhotoMessageViewModelProtocol {
-    public var transferDirection: Observable<TransferDirection> {
-        get {
-            (messageViewModel as! PhotoMessageViewModelProtocol).transferDirection
-        }
-        set {
-
-        }
-    }
-
-    public var transferProgress: Observable<Double> {
-        get {
-            (messageViewModel as! PhotoMessageViewModelProtocol).transferProgress
-        }
-        set {
-
-        }
-    }
-
-    public var transferStatus: Observable<TransferStatus> {
-        get {
-            (messageViewModel as! PhotoMessageViewModelProtocol).transferStatus
-        }
-        set {
-
-        }
-    }
-
-    public var image: Observable<UIImage?> {
-        get {
-            (messageViewModel as! PhotoMessageViewModelProtocol).image
-        }
-        set {
-
-        }
-    }
-
-    public var imageSize: CGSize = CGSizeMake(50, 50)
-
-    public var cellAccessibilityIdentifier: String = ""
-
-    public var bubbleAccessibilityIdentifier: String = ""
-
-    public var replyText: String? = nil
-
-    public var replyImage: UIImage? = nil
-
-    public func copy() -> any MessageViewModelProtocol {
-        preconditionFailure("Do not copy this")
-    }
+public final class ReplyPhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>: PhotoMessageViewModelProtocol {
+    public var transferDirection: Observable<TransferDirection> = Observable(.download)
+    
+    public var transferProgress: Observable<Double> = Observable(1)
+    
+    public var transferStatus: Observable<TransferStatus> = Observable(.success)
+    
+    public var reply: MessageViewModelProtocol? = nil
 
     public var messageViewModel: any MessageViewModelProtocol
-
-    init(messageViewModel: any MessageViewModelProtocol) {
-        self.messageViewModel = messageViewModel.copy()
-        self.messageViewModel.decorationAttributes = BaseMessageDecorationAttributes()
+    
+    public var photoMessage: PhotoMessageModelProtocol {
+        return self._photoMessage
+    }
+    
+    public let _photoMessage: PhotoMessageModelT // Can't make photoMessage: PhotoMessageModelT: https://gist.github.com/diegosanchezr/5a66c7af862e1117b556
+    
+    public var image: Observable<UIImage?>
+    
+    public var imageSize: CGSize {
+        return self.photoMessage.imageSize
+    }
+    
+    public let cellAccessibilityIdentifier = "chatto.message.reply.photo.cell"
+    public let bubbleAccessibilityIdentifier = "chatto.message.reply.photo.bubble"
+        
+    public init(photoMessage: PhotoMessageModelT, messageViewModel: MessageViewModelProtocol) {
+        self._photoMessage = photoMessage
+        self.image = Observable(photoMessage.image)
+        self.messageViewModel = messageViewModel
     }
 
+    public func willBeShown() {
+        // Need to declare empty. Otherwise subclass code won't execute (as of Xcode 7.2)
+    }
+
+    public func wasHidden() {
+        // Need to declare empty. Otherwise subclass code won't execute (as of Xcode 7.2)
+    }
+    
+    public func copy() -> any MessageViewModelProtocol {
+        let theCopy = messageViewModel.copy()
+
+        return ReplyPhotoMessageViewModel(
+            photoMessage: _photoMessage,
+            messageViewModel: theCopy
+        )
+    }
 }
