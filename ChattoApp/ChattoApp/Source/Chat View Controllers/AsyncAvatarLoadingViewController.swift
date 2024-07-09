@@ -39,8 +39,10 @@ final class AsyncAvatarLoadingViewController: DemoChatViewController {
         super.viewDidLoad()
     }
 
-    override func createTextMessageViewModelBuilder() -> DemoTextMessageViewModelBuilder {
-        DemoTextMessageViewModelBuilder { message in
+    override func createTextMessageViewModelBuilder(
+        replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
+    ) -> DemoTextMessageViewModelBuilder {
+        DemoTextMessageViewModelBuilder(replyMessageViewModelBuilder: replyMessageViewModelBuilder) { message in
             let observable: Observable<UIImage?> = .init(nil)
             let imageSize = CGSize(width: 40, height: 40)
             let randomTime = Int(self.randomGenerator.next() % 10 + 1)

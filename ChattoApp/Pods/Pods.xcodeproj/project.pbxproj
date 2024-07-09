@@ -54,7 +54,7 @@
 		620C11391EC10CB86750AEC898BBEE7B /* MessageDecorationViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1CAD007BAACFC449035A4D567BE18D /* MessageDecorationViewFactory.swift */; };
 		6464E5072C2EFF8700AD9ED8 /* ReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E5062C2EFF8700AD9ED8 /* ReplyView.swift */; };
 		6464E50A2C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */; };
-		6464E50C2C2F003E00AD9ED8 /* ReplyTextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E50B2C2F003E00AD9ED8 /* ReplyTextViewModel.swift */; };
+		6464E50C2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */; };
 		6464E50F2C2F009900AD9ED8 /* ReplyStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */; };
 		64C0B976988E929428226851E78093D2 /* PhotosInputCameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF360CD3A3B610ED69B2441B6EF963F /* PhotosInputCameraPicker.swift */; };
 		667CB1982EC6C9E82281CF0D5D34A642 /* CALayer+ImageMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA6741C54E03F72695DA198BF05BC4 /* CALayer+ImageMask.swift */; };
@@ -93,6 +93,8 @@
 		A90B8D584D952B48695FE4CE2D03EC4A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A174E57201961225505A5D48D72BCCE /* Foundation.framework */; };
 		AA8D32CD18942AC39A213C2DAF893ACF /* UIScreen+Scale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36FC4445B5F09DFA4ADC79D98A4FCE07 /* UIScreen+Scale.swift */; };
 		ACAE11C1ED5BAF572C1CF665CA0076EC /* LiveCameraCellPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F71EBF3DEED4BFCD145C580AF75CE51E /* LiveCameraCellPresenter.swift */; };
+		AFCE45F62C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCE45F52C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift */; };
+		AFCE45F82C3DBA5300B0F40E /* ReplyViewPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCE45F72C3DBA5300B0F40E /* ReplyViewPlaceholder.swift */; };
 		B4DDBE2AE20E4129940ECB09043561C6 /* CircleProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 789D4AAC37EAC35314269E26CE882578 /* CircleProgressView.swift */; };
 		B627CFF3B68E9DA1D4D498F27367E6D5 /* MessageDecorationViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AF668C850CE8A8D7A62DD10DEF672D5 /* MessageDecorationViewLayout.swift */; };
 		B6F5896C221FE4FE90FF82118AD7B135 /* ScreenMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7505EE6C30F4CA54C8E9245673041E82 /* ScreenMetric.swift */; };
@@ -232,7 +234,7 @@
 		62B2914E8D494BD6EC199D48AD9CD97F /* PhotoMessageCollectionViewCellDefaultStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotoMessageCollectionViewCellDefaultStyle.swift; sourceTree = "<group>"; };
 		6464E5062C2EFF8700AD9ED8 /* ReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyView.swift; sourceTree = "<group>"; };
 		6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyPhotoMessageViewModel.swift; sourceTree = "<group>"; };
-		6464E50B2C2F003E00AD9ED8 /* ReplyTextViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyTextViewModel.swift; sourceTree = "<group>"; };
+		6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyTextMessageViewModel.swift; sourceTree = "<group>"; };
 		6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyStyle.swift; sourceTree = "<group>"; };
 		6606D042DAF28ADCFA0B728895484D3D /* PhotosInputDataProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotosInputDataProvider.swift; sourceTree = "<group>"; };
 		67EBF0D5508C24D60035B01FB29795C6 /* PhotoBubbleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotoBubbleView.swift; sourceTree = "<group>"; };
@@ -274,6 +276,8 @@
 		A928DE174E4E3D36773382E6B4C4A6E9 /* CompoundMessagePresenterBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompoundMessagePresenterBuilder.swift; sourceTree = "<group>"; };
 		AD7F39A55C7AEAF5E7C6F54DD37BD1FB /* BaseMessageModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaseMessageModel.swift; sourceTree = "<group>"; };
 		AEDFC0ABB73C185D8E65D451030468F2 /* DummyChatItemPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DummyChatItemPresenter.swift; sourceTree = "<group>"; };
+		AFCE45F52C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyMessageViewModelBuilder.swift; sourceTree = "<group>"; };
+		AFCE45F72C3DBA5300B0F40E /* ReplyViewPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyViewPlaceholder.swift; sourceTree = "<group>"; };
 		B1CB456113C0F19E2AF2E2F43E4D19EF /* ChatCollectionViewLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChatCollectionViewLayout.swift; sourceTree = "<group>"; };
 		B24B9472C67862C09B6F86427666B494 /* Pods-ChattoApp-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-ChattoApp-frameworks.sh"; sourceTree = "<group>"; };
 		B38E3456EE7625CF505D2C730628F62D /* UIImage+Additions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "UIImage+Additions.swift"; sourceTree = "<group>"; };
@@ -575,9 +579,10 @@
 		6464E5082C2EFFCF00AD9ED8 /* ReplyMessages */ = {
 			isa = PBXGroup;
 			children = (
+				AFCE45F52C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift */,
 				6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */,
 				6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */,
-				6464E50B2C2F003E00AD9ED8 /* ReplyTextViewModel.swift */,
+				6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */,
 				6464E50D2C2F007500AD9ED8 /* Views */,
 			);
 			path = ReplyMessages;
@@ -587,6 +592,7 @@
 			isa = PBXGroup;
 			children = (
 				6464E5062C2EFF8700AD9ED8 /* ReplyView.swift */,
+				AFCE45F72C3DBA5300B0F40E /* ReplyViewPlaceholder.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1064,7 +1070,7 @@
 				F61899713724119E9DD71430110F2633 /* Cache.swift in Sources */,
 				667CB1982EC6C9E82281CF0D5D34A642 /* CALayer+ImageMask.swift in Sources */,
 				829F3C2F0FA2F87E35DE0E23166978B2 /* CGFloat+Additions.swift in Sources */,
-				6464E50C2C2F003E00AD9ED8 /* ReplyTextViewModel.swift in Sources */,
+				6464E50C2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift in Sources */,
 				D72B9311C47A14CAA4B54AD3A441685C /* CGPoint+Additions.swift in Sources */,
 				D0039DA0AB8E8203A359B06331332E52 /* CGRect+Additions.swift in Sources */,
 				C28F4A8C935B5263E07505B930170FD0 /* CGSize+Additions.swift in Sources */,
@@ -1115,6 +1121,7 @@
 				8469949B3834B1A4E0B1F64AC66386C7 /* PhotoMessageViewModel.swift in Sources */,
 				EB35EA8C1F2E0491279C492C6D75939B /* PhotosChatInputItem.swift in Sources */,
 				64C0B976988E929428226851E78093D2 /* PhotosInputCameraPicker.swift in Sources */,
+				AFCE45F82C3DBA5300B0F40E /* ReplyViewPlaceholder.swift in Sources */,
 				DA45CB05D95C9F879974AA2AE3ABA2EE /* PhotosInputCameraPickerFactory.swift in Sources */,
 				7AD5A3A4EC020105B4D3E00B78B577DB /* PhotosInputCell.swift in Sources */,
 				99C5E110AFD7474726DD63FAAD25C17E /* PhotosInputCellProvider.swift in Sources */,
@@ -1131,6 +1138,7 @@
 				3D5D9C96DFE5C53D03E9B8137FF386A9 /* TabInputButton.swift in Sources */,
 				24669D37B5C5686BEB5A766382C08302 /* TextBubbleView.swift in Sources */,
 				95995CBC39CD84010967F57F05F5E498 /* TextChatInputItem.swift in Sources */,
+				AFCE45F62C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift in Sources */,
 				2A0CA589ABEA7A7FD2E25A39BA7852B6 /* TextMessageCollectionViewCell.swift in Sources */,
 				2101638F4D70A1891E06ABC39EB85E41 /* TextMessageCollectionViewCellDefaultStyle.swift in Sources */,
 				D033D9D363353AEFF26D179EBDD0A88D /* TextMessageMenuItemPresenter.swift in Sources */,
