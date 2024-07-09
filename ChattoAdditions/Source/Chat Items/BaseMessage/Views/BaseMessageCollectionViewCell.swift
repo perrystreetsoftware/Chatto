@@ -594,6 +594,7 @@ private struct Layout {
         let preferredWidthForBubble = (containerWidth * parameters.maxContainerWidthPercentageForBubbleView).bma_round()
         let bubbleSize = bubbleView.sizeThatFits(CGSize(width: preferredWidthForBubble, height: .greatestFiniteMagnitude))
 
+        let replyMargin: CGFloat = 8
         let replySize = {
             if let replyView = parameters.replyView {
                 return replyView.sizeThatFits(CGSize(width: preferredWidthForBubble, height: .greatestFiniteMagnitude))
@@ -602,7 +603,7 @@ private struct Layout {
             }
         }()
 
-        let containerRect = CGRect(origin: CGPoint.zero, size: CGSize(width: containerWidth, height: bubbleSize.height + replySize.height))
+        let containerRect = CGRect(origin: CGPoint.zero, size: CGSize(width: containerWidth, height: bubbleSize.height + replySize.height + replyMargin))
 
         self.replyFrame = replySize.bma_rect(inContainer: containerRect, xAlignament: isIncoming ? .left : .right, yAlignment: .top)
 
@@ -672,7 +673,7 @@ private struct Layout {
             }
             currentX -= bubbleSize.width
             self.bubbleViewFrame.origin.x = currentX
-            self.replyFrame.origin.x = currentX
+//            self.replyFrame.origin.x = currentX
         }
 
         self.size = containerRect.size

@@ -111,18 +111,15 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             setupPhotoBubbleView()
             self.photoBubbleView.isHidden = false
             self.textBubbleView.isHidden = true
-            self.indicator.isHidden = false
             
             self.photoBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
         } else if self.isTextReply {
             setupTextBubbleView()
             self.textBubbleView.isHidden = false
             self.photoBubbleView.isHidden = true
-            self.indicator.isHidden = false
             
             self.textBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
         } else {
-            self.indicator.isHidden = true
             self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
         }
@@ -133,14 +130,14 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             textBubbleView.frame.origin.x = currentX
             photoBubbleView.frame.origin.x = currentX
         } else {
+            let horizontalMargin: CGFloat = 16
             let bubbleView: UIView = textBubbleView.isHidden ? photoBubbleView : textBubbleView
-            currentX = bubbleView.frame.maxX - (indicator.frame.width + 8)
+            currentX = bubbleView.frame.maxX - (indicator.frame.width + horizontalMargin)
             currentX -= indicator.frame.width
             indicator.frame.origin.x = currentX
             
             currentX -= bubbleView.frame.width
-            textBubbleView.frame.origin.x = currentX
-            photoBubbleView.frame.origin.x = currentX
+            bubbleView.frame.origin.x = currentX
         }
     }
 
@@ -154,9 +151,11 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
         
         if let indicatorStyle = baseStyle?.replyIndicatorStyle {
-            if self.viewModel?.isIncoming == true {
+            if isIncoming {
                 let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
                 indicator.layer.transform = transform
+            } else {
+                indicator.layer.transform = CATransform3DIdentity
             }
             
             indicator.image = indicatorStyle.image
