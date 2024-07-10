@@ -56,8 +56,6 @@ public protocol MessageViewModelProtocol: class { // why class? https://gist.git
     var reply: MessageViewModelProtocol? { get }
     func willBeShown() // Optional
     func wasHidden() // Optional
-
-    func copy() -> MessageViewModelProtocol
 }
 
 extension MessageViewModelProtocol {

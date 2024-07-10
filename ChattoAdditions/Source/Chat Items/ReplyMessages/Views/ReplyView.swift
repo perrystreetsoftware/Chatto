@@ -25,6 +25,9 @@
 import Foundation
 
 public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
+    private static let horizontalMargin: CGFloat = 16
+    private static let indicatorHorizontalMargin: CGFloat = 4
+
     public var viewModel: MessageViewModelProtocol! {
         didSet {
             self.updateViews()
@@ -69,7 +72,6 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         return bubbleView
     }()
     
-    private let indicatorHorizontalMargin: CGFloat = 4
     private let indicator = UIImageView()
 
     public var preferredMaxLayoutWidth: CGFloat = 0
@@ -114,13 +116,13 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             self.photoBubbleView.isHidden = false
             self.textBubbleView.isHidden = true
             
-            self.photoBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
+            self.photoBubbleView.frame.origin.x = self.indicator.frame.width + ReplyView.indicatorHorizontalMargin
         } else if self.isTextReply {
             setupTextBubbleView()
             self.textBubbleView.isHidden = false
             self.photoBubbleView.isHidden = true
             
-            self.textBubbleView.frame.origin.x = self.indicator.frame.width + indicatorHorizontalMargin
+            self.textBubbleView.frame.origin.x = self.indicator.frame.width + ReplyView.indicatorHorizontalMargin
         } else {
             self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
@@ -128,13 +130,12 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         
         if isReplyFromIncomingMessage {
             indicator.frame.origin.x = currentX
-            currentX += indicator.frame.width + indicatorHorizontalMargin
+            currentX += indicator.frame.width + ReplyView.indicatorHorizontalMargin
             textBubbleView.frame.origin.x = currentX
             photoBubbleView.frame.origin.x = currentX
         } else {
-            let horizontalMargin: CGFloat = 16
             let bubbleView: UIView = textBubbleView.isHidden ? photoBubbleView : textBubbleView
-            currentX = bubbleView.frame.maxX - (indicator.frame.width + horizontalMargin)
+            currentX = bubbleView.frame.maxX - (indicator.frame.width + ReplyView.horizontalMargin)
             currentX -= indicator.frame.width
             indicator.frame.origin.x = currentX
             
@@ -153,13 +154,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
         
         if let indicatorStyle = baseStyle?.replyIndicatorStyle {
-            if isReplyFromIncomingMessage {
-                let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
-                indicator.layer.transform = transform
-            } else {
-                indicator.layer.transform = CATransform3DIdentity
-            }
-            
+            rotateIndicatorYAxis()
             indicator.image = indicatorStyle.image
             indicator.bounds.size = indicatorStyle.size
         }
@@ -189,5 +184,14 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         
         photoBubbleView.frame.size.height = size.height
         photoBubbleView.frame.size.width = size.width
+    }
+    
+    private func rotateIndicatorYAxis() {
+        if isReplyFromIncomingMessage {
+            let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
+            indicator.layer.transform = transform
+        } else {
+            indicator.layer.transform = CATransform3DIdentity
+        }
     }
 }

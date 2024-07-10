@@ -75,17 +75,19 @@ internal class ReplyViewPlaceholder {
         )
     }
     
-    static var placeholderPhotoViewModel: ReplyPhotoMessageViewModel<PhotoMessageModel<MessageModel>> {
-        ReplyPhotoMessageViewModel(
+    static var placeholderPhotoViewModel: PhotoMessageViewModel<PhotoMessageModel<MessageModel>> {
+        PhotoMessageViewModel(
             photoMessage: emptyPhotoMessageModel,
-            messageViewModel: emptyPhotoMessageViewModel
+            messageViewModel: emptyPhotoMessageViewModel,
+            replyMessageViewModel: nil
         )
     }
     
-    static var placeholderTextViewModel: ReplyTextMessageViewModel<TextMessageModel<MessageModel>> {
-        ReplyTextMessageViewModel(
+    static var placeholderTextViewModel: TextMessageViewModel<TextMessageModel<MessageModel>> {
+        TextMessageViewModel(
             textMessage: emptyTextMessageModel,
-            messageViewModel: emptyTextMessageViewModel
+            messageViewModel: emptyTextMessageViewModel,
+            replyMessageViewModel: nil
         )
     }
 }

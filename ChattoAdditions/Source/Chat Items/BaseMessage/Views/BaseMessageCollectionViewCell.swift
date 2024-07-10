@@ -143,8 +143,9 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
     }
 
     public private(set) var replyView: ReplyView?
-    open func createReplyView() -> ReplyView? {
-        return nil
+        
+    private func createReplyView() -> ReplyView {
+        return ReplyView()
     }
 
     public private(set) var bubbleView: BubbleViewType!

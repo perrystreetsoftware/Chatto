@@ -30,6 +30,6 @@ public final class ReplyPhotoStyle: PhotoMessageCollectionViewCellDefaultStyle {
         let width = viewModel.imageSize.width * 0.5
         let height = viewModel.imageSize.height * 0.5
 
-        return CGSize(width: width, height: 100)
+        return CGSize(width: width, height: height)
     }
 }

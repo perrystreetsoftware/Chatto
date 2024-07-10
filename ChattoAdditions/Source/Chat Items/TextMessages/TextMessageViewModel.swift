@@ -31,12 +31,6 @@ public protocol TextMessageViewModelProtocol: DecoratedMessageViewModelProtocol 
 }
 
 open class TextMessageViewModel<TextMessageModelT: TextMessageModelProtocol>: TextMessageViewModelProtocol {
-    public func copy() -> any MessageViewModelProtocol {
-        let theCopy = messageViewModel.copy()
-
-        return TextMessageViewModel(textMessage: textMessage, messageViewModel: theCopy)
-    }
-
     public var reply: MessageViewModelProtocol?
 
     open var text: String {

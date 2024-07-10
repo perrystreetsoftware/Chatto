@@ -40,10 +40,6 @@ open class TextMessageCollectionViewCell: BaseMessageCollectionViewCell<TextBubb
         return TextBubbleView()
     }
 
-    public override func createReplyView() -> ReplyView? {
-        return ReplyView()
-    }
-
     public override func performBatchUpdates(_ updateClosure: @escaping () -> Void, animated: Bool, completion: (() -> Void)?) {
         super.performBatchUpdates({ () -> Void in
             self.bubbleView.performBatchUpdates(updateClosure, animated: false, completion: nil)

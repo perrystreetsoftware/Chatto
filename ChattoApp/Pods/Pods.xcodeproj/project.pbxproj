@@ -53,8 +53,6 @@
 		5CEA192B528692F133BEFDC50CF39B63 /* ChatInputBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 351D326E300E2F47C380E1A1E885E7F9 /* ChatInputBar.xib */; };
 		620C11391EC10CB86750AEC898BBEE7B /* MessageDecorationViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1CAD007BAACFC449035A4D567BE18D /* MessageDecorationViewFactory.swift */; };
 		6464E5072C2EFF8700AD9ED8 /* ReplyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E5062C2EFF8700AD9ED8 /* ReplyView.swift */; };
-		6464E50A2C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */; };
-		6464E50C2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */; };
 		6464E50F2C2F009900AD9ED8 /* ReplyStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */; };
 		64C0B976988E929428226851E78093D2 /* PhotosInputCameraPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF360CD3A3B610ED69B2441B6EF963F /* PhotosInputCameraPicker.swift */; };
 		667CB1982EC6C9E82281CF0D5D34A642 /* CALayer+ImageMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FA6741C54E03F72695DA198BF05BC4 /* CALayer+ImageMask.swift */; };
@@ -233,8 +231,6 @@
 		6085D98E6ECCEF8ECDC970332BB21054 /* Observable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		62B2914E8D494BD6EC199D48AD9CD97F /* PhotoMessageCollectionViewCellDefaultStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotoMessageCollectionViewCellDefaultStyle.swift; sourceTree = "<group>"; };
 		6464E5062C2EFF8700AD9ED8 /* ReplyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyView.swift; sourceTree = "<group>"; };
-		6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyPhotoMessageViewModel.swift; sourceTree = "<group>"; };
-		6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyTextMessageViewModel.swift; sourceTree = "<group>"; };
 		6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyStyle.swift; sourceTree = "<group>"; };
 		6606D042DAF28ADCFA0B728895484D3D /* PhotosInputDataProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotosInputDataProvider.swift; sourceTree = "<group>"; };
 		67EBF0D5508C24D60035B01FB29795C6 /* PhotoBubbleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PhotoBubbleView.swift; sourceTree = "<group>"; };
@@ -581,8 +577,6 @@
 			children = (
 				AFCE45F52C3DA07500B0F40E /* ReplyMessageViewModelBuilder.swift */,
 				6464E50E2C2F009900AD9ED8 /* ReplyStyle.swift */,
-				6464E5092C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift */,
-				6464E50B2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift */,
 				6464E50D2C2F007500AD9ED8 /* Views */,
 			);
 			path = ReplyMessages;
@@ -1061,7 +1055,6 @@
 				DC66E07D7C71A5BA377D2BD9224FF9CD /* Alignment.swift in Sources */,
 				4FC389345BA8128F60E3091C0F4752A2 /* AnimationUtils.swift in Sources */,
 				D173BF31AF27669178AEC2EF4E64E339 /* BaseMessageCollectionViewCell.swift in Sources */,
-				6464E50A2C2EFFFD00AD9ED8 /* ReplyPhotoMessageViewModel.swift in Sources */,
 				5698EF597E53091C9768B30F035D1A41 /* BaseMessageCollectionViewCellDefaultStyle.swift in Sources */,
 				D292D6E93527394F06DB5734D4EEBD81 /* BaseMessageModel.swift in Sources */,
 				4D0E49E35CA8E2928F8EB72BD7202F91 /* BaseMessagePresenter.swift in Sources */,
@@ -1070,7 +1063,6 @@
 				F61899713724119E9DD71430110F2633 /* Cache.swift in Sources */,
 				667CB1982EC6C9E82281CF0D5D34A642 /* CALayer+ImageMask.swift in Sources */,
 				829F3C2F0FA2F87E35DE0E23166978B2 /* CGFloat+Additions.swift in Sources */,
-				6464E50C2C2F003E00AD9ED8 /* ReplyTextMessageViewModel.swift in Sources */,
 				D72B9311C47A14CAA4B54AD3A441685C /* CGPoint+Additions.swift in Sources */,
 				D0039DA0AB8E8203A359B06331332E52 /* CGRect+Additions.swift in Sources */,
 				C28F4A8C935B5263E07505B930170FD0 /* CGSize+Additions.swift in Sources */,
