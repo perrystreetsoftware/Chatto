@@ -69,6 +69,12 @@ public final class TextBubbleView: UIView, MaximumLayoutWidthSpecificable, Backg
             }
         }
     }
+    
+    public var maxNumberOfLines: Int = 0 {
+        didSet {
+            updateViews()
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -149,6 +155,14 @@ public final class TextBubbleView: UIView, MaximumLayoutWidthSpecificable, Backg
     private func updateTextView() {
         guard let style = self.style, let viewModel = self.textMessageViewModel else { return }
 
+        textView.textContainer.maximumNumberOfLines = maxNumberOfLines
+        
+        if maxNumberOfLines > 0 {
+            textView.textContainer.lineBreakMode = .byTruncatingTail
+        } else {
+            textView.textContainer.lineBreakMode = .byWordWrapping
+        }
+        
         let font = style.textFont(viewModel: viewModel, isSelected: self.selected)
         let textColor = style.textColor(viewModel: viewModel, isSelected: self.selected)
 
@@ -199,7 +213,9 @@ public final class TextBubbleView: UIView, MaximumLayoutWidthSpecificable, Backg
             text: self.textMessageViewModel.text,
             font: self.style.textFont(viewModel: self.textMessageViewModel, isSelected: self.selected),
             textInsets: self.style.textInsets(viewModel: self.textMessageViewModel, isSelected: self.selected),
-            preferredMaxLayoutWidth: preferredMaxLayoutWidth
+            preferredMaxLayoutWidth: preferredMaxLayoutWidth,
+            maxNumberOfLines: maxNumberOfLines,
+            lineBreakMode: maxNumberOfLines > 0 ? .byTruncatingTail : .byWordWrapping
         )
 
         if let layoutModel = self.layoutCache.object(forKey: layoutContext.hashValue as AnyObject) as? TextBubbleLayoutModel, layoutModel.layoutContext == layoutContext {
@@ -233,6 +249,8 @@ private final class TextBubbleLayoutModel {
         let font: UIFont
         let textInsets: UIEdgeInsets
         let preferredMaxLayoutWidth: CGFloat
+        let maxNumberOfLines: Int
+        let lineBreakMode: NSLineBreakMode
     }
 
     func calculateLayout() {
@@ -250,6 +268,8 @@ private final class TextBubbleLayoutModel {
             let size = CGSize(width: width, height: .greatestFiniteMagnitude)
             let container = NSTextContainer(size: size)
             container.lineFragmentPadding = 0
+            container.maximumNumberOfLines = layoutContext.maxNumberOfLines
+            container.lineBreakMode = layoutContext.lineBreakMode
             return container
         }()
 

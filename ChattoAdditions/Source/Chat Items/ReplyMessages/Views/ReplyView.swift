@@ -57,6 +57,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         let bubbleView = TextBubbleView()
         bubbleView.layoutCache = NSCache<AnyObject, AnyObject>()
         bubbleView.textMessageViewModel = ReplyViewPlaceholder.placeholderTextViewModel
+        bubbleView.maxNumberOfLines = 1
         bubbleView.style = TextMessageCollectionViewCellDefaultStyle(
             bubbleImages: TextMessageCollectionViewCellDefaultStyle.createDefaultBubbleImages(),
             textStyle: TextMessageCollectionViewCellDefaultStyle.TextStyle(
