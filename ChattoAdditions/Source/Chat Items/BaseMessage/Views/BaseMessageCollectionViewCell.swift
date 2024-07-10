@@ -121,7 +121,6 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         didSet {
             self.updateViews()
             self.addBubbleViewConstraintsIfNeeded()
-            self.replyView?.baseStyle = baseStyle
         }
     }
 
@@ -282,6 +281,8 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
             replyIndicator.bounds.size = replyIndicatorStyle.size
         }
 
+        self.replyView?.baseStyle = baseStyle
+        
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }
@@ -673,7 +674,6 @@ private struct Layout {
             }
             currentX -= bubbleSize.width
             self.bubbleViewFrame.origin.x = currentX
-//            self.replyFrame.origin.x = currentX
         }
 
         self.size = containerRect.size
