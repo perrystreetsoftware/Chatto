@@ -37,6 +37,12 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
     }
     
+    public var isReplyFromIncomingMessage: Bool! {
+        didSet {
+            self.updateViews()
+        }
+    }
+    
     private lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
         bubbleView.photoMessageViewModel = ReplyViewPlaceholder.placeholderPhotoViewModel
@@ -62,10 +68,6 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
 
         return bubbleView
     }()
-
-    private var isIncoming: Bool {
-        viewModel?.isIncoming == true
-    }
     
     private let indicatorHorizontalMargin: CGFloat = 4
     private let indicator = UIImageView()
@@ -124,7 +126,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             self.photoBubbleView.isHidden = true
         }
         
-        if isIncoming {
+        if isReplyFromIncomingMessage {
             indicator.frame.origin.x = currentX
             currentX += indicator.frame.width + indicatorHorizontalMargin
             textBubbleView.frame.origin.x = currentX
@@ -151,7 +153,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
         
         if let indicatorStyle = baseStyle?.replyIndicatorStyle {
-            if isIncoming {
+            if isReplyFromIncomingMessage {
                 let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
                 indicator.layer.transform = transform
             } else {

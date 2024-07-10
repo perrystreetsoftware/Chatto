@@ -104,11 +104,14 @@ class DemoChatMessageFactory {
 
         var reply: MessageModelProtocol? = nil
         
+        let randomIsIncoming = arc4random_uniform(100) % 2 == 0
+        let randomIncomingText: String = randomIsIncoming ? "incoming" : "outgoing"
+        
         if arc4random_uniform(100) % 2 == 0 {
-            let imageModel = makeRandomPhotoMessage(uid, isIncoming: isIncoming)
+            let imageModel = makeRandomPhotoMessage(uid, isIncoming: randomIsIncoming)
             reply = imageModel
         } else {
-            let textModel = makeTextMessage(uid, text: "\(incomingText): This is a reply text message.", isIncoming: isIncoming)
+            let textModel = makeTextMessage(uid, text: "\(randomIncomingText): This is a reply text message.", isIncoming: randomIsIncoming)
             reply = textModel
         }
 
