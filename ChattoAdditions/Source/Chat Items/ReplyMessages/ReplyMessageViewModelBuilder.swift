@@ -28,12 +28,12 @@ import Chatto
 public final class ReplyMessageViewModelBuilder {
     private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
     
-    private let textItemType: ChatItemType
-    private let photoItemType: ChatItemType
+    private let textItemTypes: [ChatItemType]
+    private let photoItemTypes: [ChatItemType]
     
-    public init(textItemType: ChatItemType, photoItemType: ChatItemType) {
-        self.textItemType = textItemType
-        self.photoItemType = photoItemType
+    public init(textItemTypes: [ChatItemType], photoItemTypes: [ChatItemType]) {
+        self.textItemTypes = textItemTypes
+        self.photoItemTypes = photoItemTypes
     }
     
     public func createViewModel(_ model: MessageModelProtocol?) -> MessageViewModelProtocol? {
@@ -42,9 +42,9 @@ public final class ReplyMessageViewModelBuilder {
         let viewModel = messageViewModelBuilder.createMessageViewModel(model)
         
         return switch model.type {
-        case textItemType:
+        case _ where textItemTypes.contains(model.type):
             ReplyTextMessageViewModel(textMessage: model as! TextMessageModel<MessageModel>, messageViewModel: viewModel)
-        case photoItemType:
+        case _ where photoItemTypes.contains(model.type):
             ReplyPhotoMessageViewModel(
                 photoMessage: model as! PhotoMessageModel<MessageModel>,
                 messageViewModel: viewModel
