@@ -31,12 +31,14 @@ class DemoChatMessageFactory {
         "Lorem ipsum dolor sit amet 😇, https://github.com/badoo/Chatto consectetur adipiscing elit , sed do eiusmod tempor incididunt 07400000000 📞 ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore https://github.com/badoo/Chatto eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 07400000000 non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
     class func makeRandomMessage(_ uid: String) -> MessageModelProtocol {
-        let isIncoming: Bool = arc4random_uniform(100) % 2 == 0
+        let isIncoming: Bool = randomBool()
         return self.makeRandomMessage(uid, isIncoming: isIncoming)
     }
 
     class func makeRandomMessage(_ uid: String, isIncoming: Bool) -> MessageModelProtocol {
-        if arc4random_uniform(100) % 2 == 0 {
+        let showTextMessage = randomBool()
+        
+        if showTextMessage {
             return self.makeRandomTextMessage(uid, isIncoming: isIncoming)
         } else {
             return self.makeRandomPhotoMessage(uid, isIncoming: isIncoming)
@@ -97,23 +99,8 @@ class DemoChatMessageFactory {
     }
 
     private class func makeRandomTextMessage(_ uid: String, isIncoming: Bool) -> DemoTextMessageModel {
-        let incomingText: String = isIncoming ? "incoming" : "outgoing"
-        let maxText = self.demoText
-        let length: Int = 10 + Int(arc4random_uniform(300))
-        let text = "\(String(maxText[..<maxText.index(maxText.startIndex, offsetBy: length)]))\n\n\(incomingText)\n#\(uid)"
-
-        var reply: MessageModelProtocol? = nil
-        
-        let randomIsIncoming = arc4random_uniform(100) % 2 == 0
-        let randomIncomingText: String = randomIsIncoming ? "incoming" : "outgoing"
-        
-        if arc4random_uniform(100) % 2 == 0 {
-            let imageModel = makeRandomPhotoMessage(uid, isIncoming: randomIsIncoming)
-            reply = imageModel
-        } else {
-            let textModel = makeTextMessage(uid, text: "\(randomIncomingText): This is a reply text message.", isIncoming: randomIsIncoming)
-            reply = textModel
-        }
+        let text = randomText(maxLength: 300, incoming: isIncoming, uid: uid)
+        var reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
 
         return self.makeTextMessage(uid, text: text, isIncoming: isIncoming, reply: reply)
     }
@@ -177,6 +164,40 @@ class DemoChatMessageFactory {
             reply: reply
         )
     }
+    
+    private class func makeRandomReplyMessage(uid: String) -> MessageModelProtocol? {
+        let isReplyIncoming = randomBool()
+        let shouldMakeTextMessage = randomNumber() % 3
+        
+        switch randomNumber() % 3 {
+        case 0:
+            let text = randomText(maxLength: 150, incoming: isReplyIncoming, uid: uid)
+            var textMessage = makeTextMessage(uid, text: text, isIncoming: isReplyIncoming)
+            textMessage.status = .success
+            return textMessage
+        case 1:
+            var photoMessage = makeRandomPhotoMessage(uid, isIncoming: isReplyIncoming)
+            photoMessage.status = .success
+            return photoMessage
+        default:
+            return nil
+        }
+    }
+    
+    private class func randomText(maxLength: Int, incoming: Bool, uid: String) -> String {
+        let incomingText: String = incoming ? "incoming" : "outgoing"
+        let maxText = self.demoText
+        let length = randomNumber(to: maxLength)
+        return "\(String(maxText[..<maxText.index(maxText.startIndex, offsetBy: length)]))\n\n\(incomingText)\n#\(uid)"
+    }
+    
+    private class func randomBool() -> Bool {
+        return Bool.random()
+    }
+    
+    private class func randomNumber(from: Int = 0, to: Int = 100) -> Int {
+        return Int.random(in: from..<to)
+    }
 }
 
 extension TextMessageModel {
@@ -197,7 +218,6 @@ extension ChatItemType {
 }
 
 extension DemoChatMessageFactory {
-
     private enum DemoMessage {
         case text(String)
         case image(String)

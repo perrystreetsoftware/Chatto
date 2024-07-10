@@ -108,6 +108,8 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     public override func layoutSubviews() {
         super.layoutSubviews()
         
+        self.indicator.isHidden = false
+        
         var currentX: CGFloat = 0
         indicator.center.y = frame.height / 2
         
@@ -126,6 +128,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         } else {
             self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
+            self.indicator.isHidden = true
         }
         
         if isReplyFromIncomingMessage {
