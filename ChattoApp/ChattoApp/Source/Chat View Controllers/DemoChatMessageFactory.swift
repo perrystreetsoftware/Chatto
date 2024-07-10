@@ -100,22 +100,13 @@ class DemoChatMessageFactory {
 
     private class func makeRandomTextMessage(_ uid: String, isIncoming: Bool) -> DemoTextMessageModel {
         let text = randomText(maxLength: 300, incoming: isIncoming, uid: uid)
-        var reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
+        let reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
 
         return self.makeTextMessage(uid, text: text, isIncoming: isIncoming, reply: reply)
     }
 
     private class func makeRandomPhotoMessage(_ uid: String, isIncoming: Bool) -> DemoPhotoMessageModel {
-        var reply: MessageModelProtocol? = nil
-        let incomingText: String = isIncoming ? "incoming" : "outgoing"
-
-        if arc4random_uniform(100) % 2 == 0 {
-            let imageModel = makeRandomPhotoMessage(uid, isIncoming: isIncoming)
-            reply = imageModel
-        } else {
-            let textModel = makeTextMessage(uid, text: "\(incomingText): This is a reply text message.", isIncoming: isIncoming)
-            reply = textModel
-        }
+        let reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
         
         var imageSize = CGSize.zero
         switch arc4random_uniform(100) % 3 {
@@ -167,16 +158,15 @@ class DemoChatMessageFactory {
     
     private class func makeRandomReplyMessage(uid: String) -> MessageModelProtocol? {
         let isReplyIncoming = randomBool()
-        let shouldMakeTextMessage = randomNumber() % 3
         
         switch randomNumber() % 3 {
         case 0:
             let text = randomText(maxLength: 150, incoming: isReplyIncoming, uid: uid)
-            var textMessage = makeTextMessage(uid, text: text, isIncoming: isReplyIncoming)
+            let textMessage = makeTextMessage(uid, text: text, isIncoming: isReplyIncoming)
             textMessage.status = .success
             return textMessage
         case 1:
-            var photoMessage = makeRandomPhotoMessage(uid, isIncoming: isReplyIncoming)
+            let photoMessage = makeRandomPhotoMessage(uid, isIncoming: isReplyIncoming)
             photoMessage.status = .success
             return photoMessage
         default:

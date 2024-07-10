@@ -68,7 +68,6 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             ),
             baseStyle: BaseMessageCollectionViewCellDefaultStyle()
         )
-
         return bubbleView
     }()
     
@@ -145,6 +144,10 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             currentX -= bubbleView.frame.width
             bubbleView.frame.origin.x = currentX
         }
+    }
+    
+    public func setTextBubbleViewStyle(style: TextBubbleViewStyleProtocol) {
+        textBubbleView.style = style
     }
 
     private func updateViews() {
