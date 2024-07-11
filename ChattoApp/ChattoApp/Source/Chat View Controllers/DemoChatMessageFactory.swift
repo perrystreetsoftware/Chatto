@@ -31,26 +31,33 @@ class DemoChatMessageFactory {
         "Lorem ipsum dolor sit amet 😇, https://github.com/badoo/Chatto consectetur adipiscing elit , sed do eiusmod tempor incididunt 07400000000 📞 ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore https://github.com/badoo/Chatto eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 07400000000 non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
     class func makeRandomMessage(_ uid: String) -> MessageModelProtocol {
-        let isIncoming: Bool = arc4random_uniform(100) % 2 == 0
+        let isIncoming: Bool = randomBool()
         return self.makeRandomMessage(uid, isIncoming: isIncoming)
     }
 
     class func makeRandomMessage(_ uid: String, isIncoming: Bool) -> MessageModelProtocol {
-        if arc4random_uniform(100) % 2 == 0 {
+        let showTextMessage = randomBool()
+        
+        if showTextMessage {
             return self.makeRandomTextMessage(uid, isIncoming: isIncoming)
         } else {
             return self.makeRandomPhotoMessage(uid, isIncoming: isIncoming)
         }
     }
 
-    class func makeTextMessage(_ uid: String, text: String, isIncoming: Bool) -> DemoTextMessageModel {
-        let messageModel = self.makeMessageModel(uid, isIncoming: isIncoming, type: TextMessageModel<MessageModel>.chatItemType)
+    class func makeTextMessage(
+        _ uid: String,
+        text: String,
+        isIncoming: Bool,
+        reply: MessageModelProtocol? = nil
+    ) -> DemoTextMessageModel {
+        let messageModel = self.makeMessageModel(uid, isIncoming: isIncoming, type: TextMessageModel<MessageModel>.chatItemType, reply: reply)
         let textMessageModel = DemoTextMessageModel(messageModel: messageModel, text: text)
         return textMessageModel
     }
 
-    class func makePhotoMessage(_ uid: String, image: UIImage, size: CGSize, isIncoming: Bool) -> DemoPhotoMessageModel {
-        let messageModel = self.makeMessageModel(uid, isIncoming: isIncoming, type: PhotoMessageModel<MessageModel>.chatItemType)
+    class func makePhotoMessage(_ uid: String, image: UIImage, size: CGSize, isIncoming: Bool, reply: MessageModelProtocol? = nil) -> DemoPhotoMessageModel {
+        let messageModel = self.makeMessageModel(uid, isIncoming: isIncoming, type: PhotoMessageModel<MessageModel>.chatItemType, reply: reply)
         let photoMessageModel = DemoPhotoMessageModel(messageModel: messageModel, imageSize: size, image: image)
         return photoMessageModel
     }
@@ -92,14 +99,15 @@ class DemoChatMessageFactory {
     }
 
     private class func makeRandomTextMessage(_ uid: String, isIncoming: Bool) -> DemoTextMessageModel {
-        let incomingText: String = isIncoming ? "incoming" : "outgoing"
-        let maxText = self.demoText
-        let length: Int = 10 + Int(arc4random_uniform(300))
-        let text = "\(String(maxText[..<maxText.index(maxText.startIndex, offsetBy: length)]))\n\n\(incomingText)\n#\(uid)"
-        return self.makeTextMessage(uid, text: text, isIncoming: isIncoming)
+        let text = randomText(maxLength: 300, incoming: isIncoming, uid: uid)
+        let reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
+
+        return self.makeTextMessage(uid, text: text, isIncoming: isIncoming, reply: reply)
     }
 
     private class func makeRandomPhotoMessage(_ uid: String, isIncoming: Bool) -> DemoPhotoMessageModel {
+        let reply: MessageModelProtocol? = makeRandomReplyMessage(uid: uid)
+        
         var imageSize = CGSize.zero
         switch arc4random_uniform(100) % 3 {
         case 0:
@@ -119,10 +127,17 @@ class DemoChatMessageFactory {
         default:
             imageName = "pic-test-3"
         }
-        return self.makePhotoMessage(uid, image: UIImage(named: imageName)!, size: imageSize, isIncoming: isIncoming)
+        
+        return self.makePhotoMessage(uid, image: UIImage(named: imageName)!, size: imageSize, isIncoming: isIncoming, reply: reply)
     }
 
-    private class func makeMessageModel(_ uid: String, isIncoming: Bool, type: String, status: MessageStatus? = nil) -> MessageModel {
+    private class func makeMessageModel(
+        _ uid: String,
+        isIncoming: Bool,
+        type: String,
+        status: MessageStatus? = nil,
+        reply: MessageModelProtocol? = nil
+    ) -> MessageModel {
         let senderId = isIncoming ? "1" : "2"
         let messageStatus: MessageStatus = {
             guard !isIncoming else { return .success }
@@ -136,8 +151,42 @@ class DemoChatMessageFactory {
             isIncoming: isIncoming,
             date: Date(),
             status: messageStatus,
-            canReply: true
+            canReply: true,
+            reply: reply
         )
+    }
+    
+    private class func makeRandomReplyMessage(uid: String) -> MessageModelProtocol? {
+        let isReplyIncoming = randomBool()
+        
+        switch randomNumber() % 3 {
+        case 0:
+            let text = randomText(maxLength: 150, incoming: isReplyIncoming, uid: uid)
+            let textMessage = makeTextMessage(uid, text: text, isIncoming: isReplyIncoming)
+            textMessage.status = .success
+            return textMessage
+        case 1:
+            let photoMessage = makeRandomPhotoMessage(uid, isIncoming: isReplyIncoming)
+            photoMessage.status = .success
+            return photoMessage
+        default:
+            return nil
+        }
+    }
+    
+    private class func randomText(maxLength: Int, incoming: Bool, uid: String) -> String {
+        let incomingText: String = incoming ? "incoming" : "outgoing"
+        let maxText = self.demoText
+        let length = randomNumber(to: maxLength)
+        return "\(String(maxText[..<maxText.index(maxText.startIndex, offsetBy: length)]))\n\n\(incomingText)\n#\(uid)"
+    }
+    
+    private class func randomBool() -> Bool {
+        return Bool.random()
+    }
+    
+    private class func randomNumber(from: Int = 0, to: Int = 100) -> Int {
+        return Int.random(in: from..<to)
     }
 }
 
@@ -159,7 +208,6 @@ extension ChatItemType {
 }
 
 extension DemoChatMessageFactory {
-
     private enum DemoMessage {
         case text(String)
         case image(String)

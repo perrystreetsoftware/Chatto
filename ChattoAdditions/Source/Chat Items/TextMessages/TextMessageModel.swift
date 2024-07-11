@@ -30,6 +30,10 @@ public protocol TextMessageModelProtocol: DecoratedMessageModelProtocol, Content
 }
 
 open class TextMessageModel<MessageModelT: MessageModelProtocol>: TextMessageModelProtocol {
+    public var reply: MessageModelProtocol? {
+        self.messageModel.reply
+    }
+
     public var messageModel: MessageModelProtocol {
         return self._messageModel
     }

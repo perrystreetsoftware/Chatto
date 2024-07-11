@@ -31,6 +31,10 @@ public protocol PhotoMessageModelProtocol: DecoratedMessageModelProtocol, Conten
 }
 
 open class PhotoMessageModel<MessageModelT: MessageModelProtocol>: PhotoMessageModelProtocol {
+    public var reply: MessageModelProtocol? {
+        self.messageModel.reply
+    }
+
     public var messageModel: MessageModelProtocol {
         return self._messageModel
     }

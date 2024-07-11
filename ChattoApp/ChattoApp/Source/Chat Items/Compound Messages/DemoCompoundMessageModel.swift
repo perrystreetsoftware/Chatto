@@ -25,6 +25,9 @@ import Chatto
 import ChattoAdditions
 
 final class DemoCompoundMessageModel: Equatable, DecoratedMessageModelProtocol, DemoMessageModelProtocol {
+    public var reply: MessageModelProtocol? {
+        self.messageModel.reply
+    }
 
     // MARK: - Instantiation
 

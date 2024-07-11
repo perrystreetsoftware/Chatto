@@ -67,7 +67,7 @@ open class PhotoMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
     }
 
     open override func createViewModel() -> ViewModelBuilderT.ViewModelT {
-        let viewModel = self.viewModelBuilder.createViewModel(self.messageModel)
+        let viewModel = self.viewModelBuilder.createViewModel(self.messageModel, reply: self.messageModel.reply)
         let updateClosure = { [weak self] (old: Any, new: Any) -> Void in
             self?.updateCurrentCell()
         }

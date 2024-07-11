@@ -74,14 +74,19 @@ class DemoChatViewController: BaseChatViewController {
 
     override func createPresenterBuilders() -> [ChatItemType: [ChatItemPresenterBuilderProtocol]] {
 
+        let replyMessageViewModelBuilder = ReplyMessageViewModelBuilder(
+            textItemTypes: [DemoTextMessageModel.chatItemType],
+            photoItemTypes: [DemoPhotoMessageModel.chatItemType]
+        )
+        
         let textMessagePresenter = TextMessagePresenterBuilder(
-            viewModelBuilder: self.createTextMessageViewModelBuilder(),
+            viewModelBuilder: self.createTextMessageViewModelBuilder(replyMessageViewModelBuilder: replyMessageViewModelBuilder),
             interactionHandler: DemoMessageInteractionHandler(messageSender: self.messageSender, messagesSelector: self.messagesSelector)
         )
         textMessagePresenter.baseMessageStyle = BaseMessageCollectionViewCellAvatarStyle()
 
         let photoMessagePresenter = PhotoMessagePresenterBuilder(
-            viewModelBuilder: DemoPhotoMessageViewModelBuilder(),
+            viewModelBuilder: DemoPhotoMessageViewModelBuilder(replyMessageViewModelBuilder: replyMessageViewModelBuilder),
             interactionHandler: DemoMessageInteractionHandler(messageSender: self.messageSender, messagesSelector: self.messagesSelector)
         )
         photoMessagePresenter.baseCellStyle = BaseMessageCollectionViewCellAvatarStyle()
@@ -127,8 +132,8 @@ class DemoChatViewController: BaseChatViewController {
         ]
     }
 
-    func createTextMessageViewModelBuilder() -> DemoTextMessageViewModelBuilder {
-        return DemoTextMessageViewModelBuilder()
+    func createTextMessageViewModelBuilder(replyMessageViewModelBuilder: ReplyMessageViewModelBuilder) -> DemoTextMessageViewModelBuilder {
+        return DemoTextMessageViewModelBuilder(replyMessageViewModelBuilder: replyMessageViewModelBuilder)
     }
 
     func createChatInputItems() -> [ChatInputItemProtocol] {

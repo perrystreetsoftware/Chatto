@@ -29,7 +29,7 @@ public protocol ViewModelBuilderProtocol {
     associatedtype ModelT: MessageModelProtocol
     associatedtype ViewModelT: MessageViewModelProtocol
     func canCreateViewModel(fromModel model: Any) -> Bool
-    func createViewModel(_ model: ModelT) -> ViewModelT
+    func createViewModel(_ model: ModelT, reply: MessageModelProtocol?) -> ViewModelT
 }
 
 public protocol BaseMessageInteractionHandlerProtocol {
@@ -100,7 +100,7 @@ open class BaseMessagePresenter<BubbleViewT, ViewModelBuilderT, InteractionHandl
     public private(set) final lazy var messageViewModel: ViewModelT = self.createViewModel()
 
     open func createViewModel() -> ViewModelT {
-        let viewModel = self.viewModelBuilder.createViewModel(self.messageModel)
+        let viewModel = self.viewModelBuilder.createViewModel(self.messageModel, reply: self.messageModel.reply)
         return viewModel
     }
 

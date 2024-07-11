@@ -30,8 +30,8 @@ class BaseMessageCollectionViewCellAvatarStyle: BaseMessageCollectionViewCellDef
     init() {
         super.init(
             replyIndicatorStyle: .init(
-                image: UIImage(named: "reply-indicator")!,
-                size: .init(width: 38, height: 38),
+                image: UIImage(named: "pss-reply")!,
+                size: .init(width: 20, height: 20),
                 maxOffsetToReplyIndicator: 48
             )
         )
@@ -39,6 +39,6 @@ class BaseMessageCollectionViewCellAvatarStyle: BaseMessageCollectionViewCellDef
 
     override func avatarSize(viewModel: MessageViewModelProtocol) -> CGSize {
         // Display avatar for both incoming and outgoing messages for demo purpose
-        return CGSize(width: 35, height: 35)
+        return .zero
     }
 }

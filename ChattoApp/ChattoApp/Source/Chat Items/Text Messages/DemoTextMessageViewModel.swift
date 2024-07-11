@@ -34,16 +34,28 @@ public class DemoTextMessageViewModelBuilder: ViewModelBuilderProtocol {
     private static let defaultObservableImageProvider: ObservableImageProvider = { _ in Observable(UIImage(named: "userAvatar")) }
 
     private let imageProvider: ObservableImageProvider
+    private let replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
 
-    init(imageProvider: @escaping ObservableImageProvider = DemoTextMessageViewModelBuilder.defaultObservableImageProvider) {
+    init(
+        replyMessageViewModelBuilder: ReplyMessageViewModelBuilder,
+        imageProvider: @escaping ObservableImageProvider = DemoTextMessageViewModelBuilder.defaultObservableImageProvider
+    ) {
         self.imageProvider = imageProvider
+        self.replyMessageViewModelBuilder = replyMessageViewModelBuilder
     }
 
     let messageViewModelBuilder = MessageViewModelDefaultBuilder()
 
-    public func createViewModel(_ textMessage: DemoTextMessageModel) -> DemoTextMessageViewModel {
+    public func createViewModel(_ textMessage: DemoTextMessageModel, reply: MessageModelProtocol?) -> DemoTextMessageViewModel {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(textMessage)
-        let textMessageViewModel = DemoTextMessageViewModel(textMessage: textMessage, messageViewModel: messageViewModel)
+        var replyMessageViewModel = replyMessageViewModelBuilder.createViewModel(reply)
+        
+        let textMessageViewModel = DemoTextMessageViewModel(
+            textMessage: textMessage,
+            messageViewModel: messageViewModel,
+            replyMessageViewModel: replyMessageViewModel
+        )
+        
         textMessageViewModel.avatarImage = self.imageProvider(textMessage)
         return textMessageViewModel
     }

@@ -31,17 +31,25 @@ public protocol TextMessageViewModelProtocol: DecoratedMessageViewModelProtocol 
 }
 
 open class TextMessageViewModel<TextMessageModelT: TextMessageModelProtocol>: TextMessageViewModelProtocol {
+    public var reply: MessageViewModelProtocol?
+
     open var text: String {
         return self.textMessage.text
     }
+    
     public let textMessage: TextMessageModelT
     public let messageViewModel: MessageViewModelProtocol
     public let cellAccessibilityIdentifier = "chatto.message.text.cell"
     public let bubbleAccessibilityIdentifier = "chatto.message.text.bubble"
 
-    public init(textMessage: TextMessageModelT, messageViewModel: MessageViewModelProtocol) {
+    public init(
+        textMessage: TextMessageModelT,
+        messageViewModel: MessageViewModelProtocol,
+        replyMessageViewModel: MessageViewModelProtocol? = nil
+    ) {
         self.textMessage = textMessage
         self.messageViewModel = messageViewModel
+        self.reply = replyMessageViewModel
     }
 
     open func willBeShown() {
@@ -54,13 +62,25 @@ open class TextMessageViewModel<TextMessageModelT: TextMessageModelProtocol>: Te
 }
 
 open class TextMessageViewModelDefaultBuilder<TextMessageModelT: TextMessageModelProtocol>: ViewModelBuilderProtocol {
-    public init() {}
+    private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+    private let replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
+    
+    public init(
+        replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
+    ) {
+        self.replyMessageViewModelBuilder = replyMessageViewModelBuilder
+    }
 
-    let messageViewModelBuilder = MessageViewModelDefaultBuilder()
-
-    open func createViewModel(_ textMessage: TextMessageModelT) -> TextMessageViewModel<TextMessageModelT> {
+    open func createViewModel(_ textMessage: TextMessageModelT, reply: MessageModelProtocol?) -> TextMessageViewModel<TextMessageModelT> {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(textMessage)
-        let textMessageViewModel = TextMessageViewModel(textMessage: textMessage, messageViewModel: messageViewModel)
+        let replyMessageViewModel: MessageViewModelProtocol? = replyMessageViewModelBuilder.createViewModel(reply)
+        
+        let textMessageViewModel = TextMessageViewModel(
+            textMessage: textMessage,
+            messageViewModel: messageViewModel,
+            replyMessageViewModel: replyMessageViewModel
+        )
+        
         return textMessageViewModel
     }
 

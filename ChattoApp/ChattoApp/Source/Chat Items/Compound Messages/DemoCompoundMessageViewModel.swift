@@ -24,6 +24,7 @@
 import ChattoAdditions
 
 final class DemoCompoundMessageViewModel: DecoratedMessageViewModelProtocol {
+    var reply: MessageViewModelProtocol? = nil
 
     init(message: DemoCompoundMessageModel, messageViewModel: MessageViewModelProtocol) {
         self.messageViewModel = messageViewModel
@@ -39,7 +40,7 @@ struct DemoCompoundMessageViewModelBuilder: ViewModelBuilderProtocol {
 
     let messageViewModelBuilder = MessageViewModelDefaultBuilder()
 
-    func createViewModel(_ message: DemoCompoundMessageModel) -> DemoCompoundMessageViewModel {
+    func createViewModel(_ message: DemoCompoundMessageModel, reply: MessageModelProtocol?) -> DemoCompoundMessageViewModel {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(message)
         let compoundViewModel = DemoCompoundMessageViewModel(message: message,
                                                              messageViewModel: messageViewModel)

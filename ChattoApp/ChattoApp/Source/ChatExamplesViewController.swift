@@ -33,7 +33,7 @@ class ChatExamplesViewController: CellsViewController {
 
         self.cellItems = [
             self.makeOverviewCellItem(),
-            self.makeChatCellItem(title: "Empty chat", messagesCount: 0),
+            self.makeChatCellItem(title: "Empty chat", messagesCount: 2),
             self.makeChatCellItem(title: "Chat with 10000 messages", messagesCount: 10_000),
             self.makeChatCellItem(title: "Chat with expandable input", messagesCount: 10_000, shouldUseAlternativePresenter: true),
             self.makeMessageSelectionCellItem(),

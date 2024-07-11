@@ -28,9 +28,9 @@ import ChattoAdditions
 class DemoPhotoMessageViewModel: PhotoMessageViewModel<DemoPhotoMessageModel> {
 
     let fakeImage: UIImage
-    override init(photoMessage: DemoPhotoMessageModel, messageViewModel: MessageViewModelProtocol) {
+    override init(photoMessage: DemoPhotoMessageModel, messageViewModel: MessageViewModelProtocol, replyMessageViewModel: MessageViewModelProtocol?) {
         self.fakeImage = photoMessage.image
-        super.init(photoMessage: photoMessage, messageViewModel: messageViewModel)
+        super.init(photoMessage: photoMessage, messageViewModel: messageViewModel, replyMessageViewModel: replyMessageViewModel)
         if photoMessage.isIncoming {
             self.image.value = nil
         }
@@ -68,11 +68,17 @@ class DemoPhotoMessageViewModel: PhotoMessageViewModel<DemoPhotoMessageModel> {
 
 class DemoPhotoMessageViewModelBuilder: ViewModelBuilderProtocol {
 
-    let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+    private let replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
+    private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+    
+    init(replyMessageViewModelBuilder: ReplyMessageViewModelBuilder) {
+        self.replyMessageViewModelBuilder = replyMessageViewModelBuilder
+    }
 
-    func createViewModel(_ model: DemoPhotoMessageModel) -> DemoPhotoMessageViewModel {
+    func createViewModel(_ model: DemoPhotoMessageModel, reply: MessageModelProtocol?) -> DemoPhotoMessageViewModel {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(model)
-        let photoMessageViewModel = DemoPhotoMessageViewModel(photoMessage: model, messageViewModel: messageViewModel)
+        let replyMessageViewModel = replyMessageViewModelBuilder.createViewModel(reply)
+        let photoMessageViewModel = DemoPhotoMessageViewModel(photoMessage: model, messageViewModel: messageViewModel, replyMessageViewModel: replyMessageViewModel)
         photoMessageViewModel.avatarImage.value = UIImage(named: "userAvatar")
         return photoMessageViewModel
     }

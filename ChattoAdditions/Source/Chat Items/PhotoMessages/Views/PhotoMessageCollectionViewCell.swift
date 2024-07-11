@@ -49,6 +49,8 @@ open class PhotoMessageCollectionViewCell: BaseMessageCollectionViewCell<PhotoBu
             self.accessibilityIdentifier = self.photoMessageViewModel.cellAccessibilityIdentifier
             self.messageViewModel = self.photoMessageViewModel
             self.bubbleView.photoMessageViewModel = self.photoMessageViewModel
+            self.replyView?.viewModel = self.photoMessageViewModel.reply
+            self.replyView?.isReplyFromIncomingMessage = self.photoMessageViewModel.isIncoming
         }
     }
 

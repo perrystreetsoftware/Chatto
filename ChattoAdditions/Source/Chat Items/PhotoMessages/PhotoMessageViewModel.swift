@@ -47,6 +47,8 @@ public protocol PhotoMessageViewModelProtocol: DecoratedMessageViewModelProtocol
 }
 
 open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>: PhotoMessageViewModelProtocol {
+    public var reply: MessageViewModelProtocol?
+    
     public var photoMessage: PhotoMessageModelProtocol {
         return self._photoMessage
     }
@@ -65,10 +67,11 @@ open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>:
         return self.messageViewModel.isShowingFailedIcon || self.transferStatus.value == .failed
     }
 
-    public init(photoMessage: PhotoMessageModelT, messageViewModel: MessageViewModelProtocol) {
+    public init(photoMessage: PhotoMessageModelT, messageViewModel: MessageViewModelProtocol, replyMessageViewModel: MessageViewModelProtocol?) {
         self._photoMessage = photoMessage
         self.image = Observable(photoMessage.image)
         self.messageViewModel = messageViewModel
+        self.reply = replyMessageViewModel
     }
 
     open func willBeShown() {
@@ -81,13 +84,23 @@ open class PhotoMessageViewModel<PhotoMessageModelT: PhotoMessageModelProtocol>:
 }
 
 open class PhotoMessageViewModelDefaultBuilder<PhotoMessageModelT: PhotoMessageModelProtocol>: ViewModelBuilderProtocol {
-    public init() {}
+    private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+    private let replyMessageViewModelBuilder: ReplyMessageViewModelBuilder
+    
+    public init(replyMessageViewModelBuilder: ReplyMessageViewModelBuilder) {
+        self.replyMessageViewModelBuilder = replyMessageViewModelBuilder
+    }
 
-    let messageViewModelBuilder = MessageViewModelDefaultBuilder()
-
-    open func createViewModel(_ model: PhotoMessageModelT) -> PhotoMessageViewModel<PhotoMessageModelT> {
+    open func createViewModel(_ model: PhotoMessageModelT, reply: MessageModelProtocol?) -> PhotoMessageViewModel<PhotoMessageModelT> {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(model)
-        let photoMessageViewModel = PhotoMessageViewModel(photoMessage: model, messageViewModel: messageViewModel)
+        let replyMessageViewModel: MessageViewModelProtocol? = replyMessageViewModelBuilder.createViewModel(reply)
+        
+        let photoMessageViewModel = PhotoMessageViewModel(
+            photoMessage: model,
+            messageViewModel: messageViewModel,
+            replyMessageViewModel: replyMessageViewModel
+        )
+        
         return photoMessageViewModel
     }
 
