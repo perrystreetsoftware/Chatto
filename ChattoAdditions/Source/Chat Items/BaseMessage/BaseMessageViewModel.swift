@@ -124,13 +124,6 @@ extension DecoratedMessageViewModelProtocol {
 }
 
 open class MessageViewModel: MessageViewModelProtocol {
-    open func copy() -> any MessageViewModelProtocol {
-        return MessageViewModel(dateFormatter: self.dateFormatter,
-                                messageModel: self.messageModel,
-                                avatarImage: nil,
-                                decorationAttributes: self.decorationAttributes)
-    }
-
     open var reply: MessageViewModelProtocol? { return nil }
 
     open var canReply: Bool { self.messageModel.canReply }
