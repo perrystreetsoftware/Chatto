@@ -1,18 +1,18 @@
 import Foundation
 import Chatto
 
-public final class ReplyMessageViewModelBuilder {
-    private let messageViewModelBuilder = MessageViewModelDefaultBuilder()
+open class ReplyMessageViewModelBuilder {
+    public let messageViewModelBuilder = MessageViewModelDefaultBuilder()
     
-    private let textItemTypes: [ChatItemType]
-    private let photoItemTypes: [ChatItemType]
+    public let textItemTypes: [ChatItemType]
+    public let photoItemTypes: [ChatItemType]
     
     public init(textItemTypes: [ChatItemType], photoItemTypes: [ChatItemType]) {
         self.textItemTypes = textItemTypes
         self.photoItemTypes = photoItemTypes
     }
     
-    public func createViewModel(_ model: MessageModelProtocol?) -> MessageViewModelProtocol? {
+    open func createViewModel(_ model: MessageModelProtocol?) -> MessageViewModelProtocol? {
         guard let model = model else { return nil }
         
         let viewModel = messageViewModelBuilder.createMessageViewModel(model)
