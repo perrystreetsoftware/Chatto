@@ -74,7 +74,7 @@ class DemoChatViewController: BaseChatViewController {
 
     override func createPresenterBuilders() -> [ChatItemType: [ChatItemPresenterBuilderProtocol]] {
 
-        let replyMessageViewModelBuilder = ReplyMessageViewModelBuilder(
+        let replyMessageViewModelBuilder = DemoReplyMessageViewModelBuilder(
             textItemTypes: [DemoTextMessageModel.chatItemType],
             photoItemTypes: [DemoPhotoMessageModel.chatItemType]
         )
