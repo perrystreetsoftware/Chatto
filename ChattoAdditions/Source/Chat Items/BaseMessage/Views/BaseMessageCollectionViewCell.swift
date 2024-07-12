@@ -144,7 +144,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
 
     public private(set) var replyView: ReplyView?
         
-    private func createReplyView() -> ReplyView {
+    open func createReplyView() -> ReplyView {
         return ReplyView()
     }
 
@@ -491,14 +491,6 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
             updateAlpha()
         }
         return offset >= maxOffset
-    }
-
-    public func hideReplyIndicator() {
-        replyIndicator.isHidden = true
-    }
-    
-    public func showReplyIndicator() {
-        replyIndicator.isHidden = false
     }
 
     // MARK: Selection

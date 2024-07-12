@@ -22,14 +22,14 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
     }
     
-    private lazy var photoBubbleView: PhotoBubbleView = {
+    public lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
         bubbleView.photoMessageViewModel = ReplyViewPlaceholder.placeholderPhotoViewModel
         bubbleView.photoMessageStyle = ReplyPhotoStyle()
         return bubbleView
     }()
     
-    private let textBubbleView: TextBubbleView = {
+    public lazy var textBubbleView: TextBubbleView = {
         let bubbleView = TextBubbleView()
         bubbleView.layoutCache = NSCache<AnyObject, AnyObject>()
         bubbleView.textMessageViewModel = ReplyViewPlaceholder.placeholderTextViewModel
