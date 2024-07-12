@@ -48,7 +48,7 @@ public class DemoTextMessageViewModelBuilder: ViewModelBuilderProtocol {
 
     public func createViewModel(_ textMessage: DemoTextMessageModel, reply: MessageModelProtocol?) -> DemoTextMessageViewModel {
         let messageViewModel = self.messageViewModelBuilder.createMessageViewModel(textMessage)
-        var replyMessageViewModel = replyMessageViewModelBuilder.createViewModel(reply)
+        let replyMessageViewModel = replyMessageViewModelBuilder.createViewModel(reply)
         
         let textMessageViewModel = DemoTextMessageViewModel(
             textMessage: textMessage,
