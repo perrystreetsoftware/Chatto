@@ -1,34 +1,49 @@
 import Foundation
+import UIKit
 
 public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     private static let horizontalMargin: CGFloat = 16
     private static let indicatorHorizontalMargin: CGFloat = 4
+    private static let replyToLabelBottomMargin: CGFloat = 8
+
+    public var replyToText: String? {
+        didSet {
+            self.replyToLabel.text = replyToText
+            self.replyToLabel.sizeToFit()
+        }
+    }
 
     public var viewModel: MessageViewModelProtocol! {
         didSet {
             self.updateViews()
         }
     }
-    
+
     public var baseStyle: BaseMessageCollectionViewCellStyleProtocol! {
         didSet {
             self.updateViews()
         }
     }
-    
+
     public var isReplyFromIncomingMessage: Bool! {
         didSet {
             self.updateViews()
         }
     }
-    
+
     public lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
         bubbleView.photoMessageViewModel = ReplyViewPlaceholder.placeholderPhotoViewModel
         bubbleView.photoMessageStyle = ReplyPhotoStyle()
         return bubbleView
     }()
-    
+
+    public lazy var replyToLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+
     public lazy var textBubbleView: TextBubbleView = {
         let bubbleView = TextBubbleView()
         bubbleView.layoutCache = NSCache<AnyObject, AnyObject>()
@@ -47,11 +62,11 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         )
         return bubbleView
     }()
-    
+
     private let indicator = UIImageView()
 
     public var preferredMaxLayoutWidth: CGFloat = 0
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.commonInit()
@@ -63,6 +78,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     }
 
     private func commonInit() {
+        self.addSubview(self.replyToLabel)
         self.addSubview(self.photoBubbleView)
         self.addSubview(self.textBubbleView)
         self.addSubview(self.indicator)
@@ -71,10 +87,14 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
         if self.isImageReply {
             self.setupPhotoBubbleView()
-            return self.photoBubbleView.sizeThatFits(size)
+            var size = self.photoBubbleView.sizeThatFits(size)
+            size.height += self.replyToLabel.frame.height + ReplyView.replyToLabelBottomMargin
+            return size
         } else if self.isTextReply {
             self.setupTextBubbleView()
-            return self.textBubbleView.sizeThatFits(size)
+            var size = self.textBubbleView.sizeThatFits(size)
+            size.height += self.replyToLabel.frame.height + ReplyView.replyToLabelBottomMargin
+            return size
         } else {
             return .zero
         }
@@ -83,48 +103,55 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     // MARK: Layout
     public override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         self.indicator.isHidden = false
-        
+        self.replyToLabel.isHidden = false
+
         var currentX: CGFloat = 0
-        indicator.center.y = frame.height / 2
-        
+
         if self.isImageReply {
             setupPhotoBubbleView()
             self.photoBubbleView.isHidden = false
             self.textBubbleView.isHidden = true
-            
+
+            self.photoBubbleView.frame.origin.y = self.replyToLabel.frame.height + ReplyView.replyToLabelBottomMargin
             self.photoBubbleView.frame.origin.x = self.indicator.frame.width + ReplyView.indicatorHorizontalMargin
         } else if self.isTextReply {
             setupTextBubbleView()
             self.textBubbleView.isHidden = false
             self.photoBubbleView.isHidden = true
-            
+            self.textBubbleView.frame.origin.y = self.replyToLabel.frame.height + ReplyView.replyToLabelBottomMargin
             self.textBubbleView.frame.origin.x = self.indicator.frame.width + ReplyView.indicatorHorizontalMargin
         } else {
+            self.replyToLabel.isHidden = true
             self.textBubbleView.isHidden = true
             self.photoBubbleView.isHidden = true
             self.indicator.isHidden = true
         }
-        
+
         if isReplyFromIncomingMessage {
             indicator.frame.origin.x = currentX
+            replyToLabel.frame.origin.x = currentX
+            replyToLabel.textAlignment = .left
             currentX += indicator.frame.width + ReplyView.indicatorHorizontalMargin
             textBubbleView.frame.origin.x = currentX
             photoBubbleView.frame.origin.x = currentX
         } else {
             let bubbleView: UIView = textBubbleView.isHidden ? photoBubbleView : textBubbleView
             currentX = bubbleView.frame.maxX - (indicator.frame.width + ReplyView.horizontalMargin)
+            replyToLabel.frame.origin.x = currentX - replyToLabel.frame.width
+            replyToLabel.textAlignment = .right
+
             currentX -= indicator.frame.width
             indicator.frame.origin.x = currentX
-            
+
+
             currentX -= bubbleView.frame.width
             bubbleView.frame.origin.x = currentX
         }
-    }
-    
-    public func setTextBubbleViewStyle(style: TextBubbleViewStyleProtocol) {
-        textBubbleView.style = style
+
+        let bubbleView: UIView = textBubbleView.isHidden ? photoBubbleView : textBubbleView
+        indicator.center.y = bubbleView.center.y
     }
 
     private func updateViews() {
@@ -135,7 +162,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         if let viewModel = self.viewModel as? TextMessageViewModelProtocol {
             textBubbleView.textMessageViewModel = viewModel
         }
-        
+
         if let indicatorStyle = baseStyle?.replyIndicatorStyle {
             rotateIndicatorYAxis()
             indicator.image = indicatorStyle.image
@@ -155,7 +182,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         textBubbleView.preferredMaxLayoutWidth = preferredMaxLayoutWidth
 
         let size = textBubbleView.systemLayoutSizeFitting(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
-        
+
         textBubbleView.frame.size.height = size.height
         textBubbleView.frame.size.width = size.width
     }
@@ -164,11 +191,11 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         photoBubbleView.preferredMaxLayoutWidth = preferredMaxLayoutWidth
 
         let size = photoBubbleView.systemLayoutSizeFitting(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
-        
+
         photoBubbleView.frame.size.height = size.height
         photoBubbleView.frame.size.width = size.width
     }
-    
+
     private func rotateIndicatorYAxis() {
         if isReplyFromIncomingMessage {
             let transform = CATransform3DRotate(CATransform3DIdentity, .pi, 0, 1, 0)
