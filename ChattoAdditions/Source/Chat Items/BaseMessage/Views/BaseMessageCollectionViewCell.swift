@@ -143,7 +143,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
     }
 
     public private(set) var replyView: ReplyView?
-        
+
     open func createReplyView() -> ReplyView {
         return ReplyView()
     }
@@ -283,7 +283,7 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         }
 
         self.replyView?.baseStyle = baseStyle
-        
+
         self.setNeedsLayout()
         self.layoutIfNeeded()
     }

@@ -58,7 +58,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
                 incomingInsets: UIEdgeInsets(top: 10, left: 19, bottom: 10, right: 15),
                 outgoingInsets: UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 19)
             ),
-            baseStyle: BaseMessageCollectionViewCellDefaultStyle()
+            baseStyle: (baseStyle as? BaseMessageCollectionViewCellDefaultStyle) ?? BaseMessageCollectionViewCellDefaultStyle()
         )
         return bubbleView
     }()
@@ -167,6 +167,15 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             rotateIndicatorYAxis()
             indicator.image = indicatorStyle.image
             indicator.bounds.size = indicatorStyle.size
+        }
+
+        if let style = baseStyle as? BaseMessageCollectionViewCellDefaultStyle,
+           let bubbleStyle = textBubbleView.style as? TextMessageCollectionViewCellDefaultStyle {
+            textBubbleView.style = TextMessageCollectionViewCellDefaultStyle(
+                bubbleImages: bubbleStyle.bubbleImages,
+                textStyle: bubbleStyle.textStyle,
+                baseStyle: style
+            )
         }
     }
 
