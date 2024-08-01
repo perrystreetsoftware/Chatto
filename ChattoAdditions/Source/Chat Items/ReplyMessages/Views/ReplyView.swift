@@ -67,6 +67,13 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
 
     public var preferredMaxLayoutWidth: CGFloat = 0
 
+    public var preferredAlpha: CGFloat = 1 {
+        didSet {
+            self.photoBubbleView.alpha = preferredAlpha
+            self.textBubbleView.alpha = preferredAlpha
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.commonInit()
