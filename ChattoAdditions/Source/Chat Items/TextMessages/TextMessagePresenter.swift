@@ -82,6 +82,9 @@ open class TextMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
             self?.updateCurrentCell()
         }
         viewModel.avatarImage.observe(self, closure: updateClosure)
+        if let photoReply = viewModel.reply as? PhotoMessageViewModelProtocol {
+            photoReply.image.observe(self, closure: updateClosure)
+        }
         return viewModel
     }
 
