@@ -73,6 +73,9 @@ open class PhotoMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
         }
         viewModel.avatarImage.observe(self, closure: updateClosure)
         viewModel.image.observe(self, closure: updateClosure)
+        if let photoReply = viewModel.reply as? PhotoMessageViewModelProtocol {
+            photoReply.image.observe(self, closure: updateClosure)
+        }
         viewModel.transferDirection.observe(self, closure: updateClosure)
         viewModel.transferProgress.observe(self, closure: updateClosure)
         viewModel.transferStatus.observe(self, closure: updateClosure)
