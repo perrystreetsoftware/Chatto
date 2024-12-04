@@ -130,4 +130,8 @@ open class TextMessagePresenter<ViewModelBuilderT, InteractionHandlerT>
     open override func performMenuControllerAction(_ action: Selector) {
         self.menuPresenter?.performMenuControllerAction(action, for: self.messageViewModel.text, item: self.messageModel)
     }
+    
+    open override func spotlight() {
+        self.textCell?.spotlight()
+    }
 }

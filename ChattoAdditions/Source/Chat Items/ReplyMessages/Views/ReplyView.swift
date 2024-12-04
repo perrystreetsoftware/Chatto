@@ -30,6 +30,12 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             self.updateViews()
         }
     }
+    
+    public var textColor: UIColor? {
+        didSet {
+            self.updateViews()
+        }
+    }
 
     public lazy var photoBubbleView: PhotoBubbleView = {
         let bubbleView = PhotoBubbleView()
@@ -183,6 +189,12 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
                 textStyle: bubbleStyle.textStyle,
                 baseStyle: style
             )
+        }
+        
+        if let textColor {
+            textBubbleView.textView.textColor = textColor
+        } else {
+            textBubbleView.textView.textColor = textBubbleView.style.textColor(viewModel: textBubbleView.textMessageViewModel, isSelected: false)
         }
     }
 

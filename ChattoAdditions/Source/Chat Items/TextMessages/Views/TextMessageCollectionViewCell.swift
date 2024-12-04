@@ -81,4 +81,8 @@ open class TextMessageCollectionViewCell: BaseMessageCollectionViewCell<TextBubb
             self.bubbleView.layoutCache = self.layoutCache
         }
     }
+    
+    public func spotlight() {
+        self.bubbleView.spotlight()
+    }
 }

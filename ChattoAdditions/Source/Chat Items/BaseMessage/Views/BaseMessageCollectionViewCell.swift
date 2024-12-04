@@ -196,6 +196,18 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(BaseMessageCollectionViewCell.avatarTapped(_:)))
         return tapGestureRecognizer
     }()
+        
+    public private(set) lazy var replyTapGestureRecognizer: UITapGestureRecognizer = {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(BaseMessageCollectionViewCell.replyBubbleTapped(_:)))
+        tapGestureRecognizer.numberOfTapsRequired = 1
+        return tapGestureRecognizer
+    }()
+        
+        public private(set) lazy var replyPhotoTapGestureRecognizer: UITapGestureRecognizer = {
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(BaseMessageCollectionViewCell.replyBubbleTapped(_:)))
+            tapGestureRecognizer.numberOfTapsRequired = 1
+            return tapGestureRecognizer
+        }()
 
     private func commonInit() {
         self.avatarView = self.createAvatarView()
@@ -212,6 +224,16 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         self.contentView.addSubview(self.avatarView)
         self.contentView.addSubview(self.bubbleView)
         if let replyView = self.replyView {
+            replyView.isExclusiveTouch = true
+            replyView.addGestureRecognizer(self.replyPhotoTapGestureRecognizer)
+            replyView.textBubbleView.textView.addGestureRecognizer(self.replyTapGestureRecognizer)
+            if let recognizers = replyView.textBubbleView.textView.gestureRecognizers {
+                for recognizer in recognizers {
+                    if recognizer.name == "UITextInteractionNameLinkTap" {
+                        replyTapGestureRecognizer.require(toFail: recognizer)
+                    }
+                }
+            }
             self.contentView.addSubview(replyView)
         }
         self.contentView.addSubview(self.failedButton)
@@ -562,6 +584,12 @@ open class BaseMessageCollectionViewCell<BubbleViewType>: UICollectionViewCell, 
         default:
             break
         }
+    }
+    
+    public var onReplyBubbleTapped: ((_ messageViewModel: MessageViewModelProtocol?) -> Void)?
+
+    @objc private func replyBubbleTapped(_ tapGestureRecognizer: UITapGestureRecognizer) {
+        onReplyBubbleTapped?(self.replyView?.viewModel)
     }
 }
 

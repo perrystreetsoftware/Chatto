@@ -45,6 +45,7 @@ public protocol BaseMessageInteractionHandlerProtocol {
     func userDidEndLongPressOnBubble(message: MessageType, viewModel: ViewModelType)
     func userDidSelectMessage(message: MessageType, viewModel: ViewModelType)
     func userDidDeselectMessage(message: MessageType, viewModel: ViewModelType)
+    func userDidTapOnReplyBubble(message: MessageModelProtocol, viewModel: MessageViewModelProtocol)
 }
 
 open class BaseMessagePresenter<BubbleViewT, ViewModelBuilderT, InteractionHandlerT>: BaseChatItemPresenter<BaseMessageCollectionViewCell<BubbleViewT>> where
@@ -156,6 +157,10 @@ open class BaseMessagePresenter<BubbleViewT, ViewModelBuilderT, InteractionHandl
                 guard let sSelf = self else { return }
                 sSelf.onCellSelection()
             }
+            cell.onReplyBubbleTapped = { [weak self] (replyViewModel) in
+                guard let self else { return }
+                self.onCellReplyTapped()
+            }
             additionalConfiguration?()
         }, animated: animated, completion: nil)
     }
@@ -240,5 +245,17 @@ open class BaseMessagePresenter<BubbleViewT, ViewModelBuilderT, InteractionHandl
         } else {
             self.interactionHandler?.userDidSelectMessage(message: self.messageModel, viewModel: self.messageViewModel)
         }
+    }
+        
+    open func onCellReplyTapped() {
+        guard
+            let replyModel = self.messageModel.reply,
+            let replyViewModel = self.messageViewModel.reply
+        else { return }
+        
+        self.interactionHandler?.userDidTapOnReplyBubble(
+            message: replyModel,
+            viewModel: replyViewModel
+        )
     }
 }

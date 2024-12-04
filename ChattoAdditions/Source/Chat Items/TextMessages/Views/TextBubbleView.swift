@@ -232,6 +232,23 @@ public final class TextBubbleView: UIView, MaximumLayoutWidthSpecificable, Backg
     public var canCalculateSizeInBackground: Bool {
         return true
     }
+    
+    // MARK: - Spotlighting
+    public func spotlight() {
+        animateSpotlight()
+    }
+    
+    private func animateSpotlight(times: Int = 5) {
+        guard times > 0 else {
+            selected = false
+            return
+        }
+            
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(150)) { [weak self] in
+            self?.selected.toggle()
+            self?.animateSpotlight(times: times - 1)
+        }
+    }
 }
 
 private final class TextBubbleLayoutModel {
