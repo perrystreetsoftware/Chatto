@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 internal class ReplyViewPlaceholder {
     private static let emptyPhotoMessageModel = PhotoMessageModel(

@@ -307,17 +307,31 @@ open class BaseChatViewController: UIViewController,
     var isAdjustingInputContainer: Bool = false
 
     open func setupKeyboardTracker() {
-        let heightBlock = { [weak self] (bottomMargin: CGFloat, keyboardStatus: KeyboardStatus) in
-            guard let sSelf = self else { return }
-            if let keyboardObservingDelegate = sSelf.keyboardEventsHandler {
-                keyboardObservingDelegate.onKeyboardStateDidChange(bottomMargin, keyboardStatus)
-            } else {
-                sSelf.changeInputContentBottomMarginTo(bottomMargin)
-            }
-        }
-        self.keyboardTracker = KeyboardTracker(viewController: self, inputBarContainer: self.inputBarContainer, heightBlock: heightBlock, notificationCenter: self.notificationCenter)
+        if #available(iOS 26, *) {
+            inputContainerBottomConstraint.isActive = false
+            inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        (self.view as? BaseChatViewControllerViewProtocol)?.bmaInputAccessoryView = self.keyboardTracker?.trackingView
+            NSLayoutConstraint.activate([
+                inputBarContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                inputBarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                inputBarContainer.bottomAnchor.constraint(
+                    equalTo: view.keyboardLayoutGuide.topAnchor
+                )
+            ])
+            view.keyboardLayoutGuide.followsUndockedKeyboard = true
+        } else {
+            let heightBlock = { [weak self] (bottomMargin: CGFloat, keyboardStatus: KeyboardStatus) in
+                guard let sSelf = self else { return }
+                if let keyboardObservingDelegate = sSelf.keyboardEventsHandler {
+                    keyboardObservingDelegate.onKeyboardStateDidChange(bottomMargin, keyboardStatus)
+                } else {
+                    sSelf.changeInputContentBottomMarginTo(bottomMargin)
+                }
+            }
+            self.keyboardTracker = KeyboardTracker(viewController: self, inputBarContainer: self.inputBarContainer, heightBlock: heightBlock, notificationCenter: self.notificationCenter)
+    
+            (self.view as? BaseChatViewControllerViewProtocol)?.bmaInputAccessoryView = self.keyboardTracker?.trackingView
+        }
     }
 
     var notificationCenter = NotificationCenter.default
