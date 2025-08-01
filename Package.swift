@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Chatto",
-    platforms: [.iOS(.v9)],
+    platforms: [.iOS(.v14)],
     products: [
         .library(name: "Chatto", targets: ["Chatto"]),
         .library(name: "ChattoAdditions", targets: ["ChattoAdditions"]),
