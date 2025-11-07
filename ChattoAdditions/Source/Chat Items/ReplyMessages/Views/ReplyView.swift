@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
+open class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     private static let horizontalMargin: CGFloat = 16
     private static let indicatorHorizontalMargin: CGFloat = 4
     private static let replyToLabelBottomMargin: CGFloat = 8
@@ -30,15 +30,19 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
             self.updateViews()
         }
     }
-    
+
     public var textColor: UIColor? {
         didSet {
             self.updateViews()
         }
     }
 
+    open func createPhotoBubbleView() -> PhotoBubbleView {
+        return PhotoBubbleView()
+    }
+
     public lazy var photoBubbleView: PhotoBubbleView = {
-        let bubbleView = PhotoBubbleView()
+        let bubbleView = createPhotoBubbleView()
         bubbleView.photoMessageViewModel = ReplyViewPlaceholder.placeholderPhotoViewModel
         bubbleView.photoMessageStyle = ReplyPhotoStyle()
         return bubbleView
@@ -80,7 +84,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
         }
     }
 
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         self.commonInit()
     }
@@ -190,7 +194,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
                 baseStyle: style
             )
         }
-        
+
         if let textColor {
             textBubbleView.textView.textColor = textColor
         } else {
@@ -218,7 +222,7 @@ public final class ReplyView: UIView, MaximumLayoutWidthSpecificable {
     private func setupPhotoBubbleView() {
         photoBubbleView.preferredMaxLayoutWidth = preferredMaxLayoutWidth
 
-        let size = photoBubbleView.systemLayoutSizeFitting(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
+        let size = photoBubbleView.sizeThatFits(CGSize(width: preferredMaxLayoutWidth, height: CGFloat.greatestFiniteMagnitude))
 
         photoBubbleView.frame.size.height = size.height
         photoBubbleView.frame.size.width = size.width
