@@ -318,21 +318,6 @@ open class BaseChatViewController: UIViewController,
         self.keyboardTracker = KeyboardTracker(viewController: self, inputBarContainer: self.inputBarContainer, heightBlock: heightBlock, notificationCenter: self.notificationCenter)
 
         (self.view as? BaseChatViewControllerViewProtocol)?.bmaInputAccessoryView = self.keyboardTracker?.trackingView
-
-        if #available(iOS 26, *) {
-            notificationCenter.removeObserver(self.keyboardTracker!)
-            inputContainerBottomConstraint.isActive = false
-            inputBarContainer.translatesAutoresizingMaskIntoConstraints = false
-
-            NSLayoutConstraint.activate([
-                inputBarContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                inputBarContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                inputBarContainer.bottomAnchor.constraint(
-                    equalTo: view.keyboardLayoutGuide.topAnchor
-                )
-            ])
-            view.keyboardLayoutGuide.followsUndockedKeyboard = true
-        }
     }
 
     var notificationCenter = NotificationCenter.default
@@ -343,7 +328,6 @@ open class BaseChatViewController: UIViewController,
         super.viewDidLayoutSubviews()
 
         self.adjustCollectionViewInsets(shouldUpdateContentOffset: true)
-        self.keyboardTracker.adjustTrackingViewSizeIfNeeded()
 
         if self.isFirstLayout {
             self.updateQueue.start()
