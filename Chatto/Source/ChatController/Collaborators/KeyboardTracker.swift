@@ -197,6 +197,35 @@ class KeyboardTracker {
     private func showKeyboard(withBottomConstraint bottomConstraint: CGFloat) {
         self.keyboardStatus = .shown
         self.layoutInputContainer(withBottomConstraint: bottomConstraint)
+        self.adjustTrackingViewSizeIfNeeded(bottomConstraint)
+    }
+    
+    func adjustTrackingViewSizeIfNeeded(_ bottomConstraint: CGFloat? = nil) {
+        guard self.isTracking && self.keyboardStatus == .shown else { return }
+        self.adjustTrackingViewSize(bottomConstraint)
+    }
+
+    private func adjustTrackingViewSize(_ bottomConstraint: CGFloat? = nil) {
+        let inputContainerHeight = self.inputBarContainer.bounds.height
+        if self.keyboardTrackerView.preferredSize.height != inputContainerHeight {
+            self.keyboardTrackerView.preferredSize.height = inputContainerHeight
+            self.isPerformingForcedLayout = true
+            
+            // Sometimes, the autolayout system doesn't finish the layout inside of the input bar container at this point.
+            // If it happens, then the input bar may have a height different than an input bar container.
+            // We need to ensure that their heights are the same; otherwise, it would lead to incorrect calculations that in turn affects lastKnownKeyboardHeight.
+            // Tracking view adjustment changes a keyboard height and triggers an update of lastKnownKeyboardHeight.
+            
+            self.inputBarContainer.layoutIfNeeded()
+            self.keyboardTrackerView.window?.layoutIfNeeded()
+            if let bottomConstraint {
+                // When adjusting tracking view size we need to trigger a recalculation for the bottom constraint.
+                // This will address the issue https://github.com/perrystreetsoftware/spaceflight/issues/3575
+                self.layoutInputContainer(withBottomConstraint: bottomConstraint)
+                
+            }
+            self.isPerformingForcedLayout = false
+        }
     }
 }
 
