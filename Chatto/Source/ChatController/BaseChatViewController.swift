@@ -328,6 +328,7 @@ open class BaseChatViewController: UIViewController,
         super.viewDidLayoutSubviews()
 
         self.adjustCollectionViewInsets(shouldUpdateContentOffset: true)
+        self.keyboardTracker.adjustTrackingViewSizeIfNeeded()
 
         if self.isFirstLayout {
             self.updateQueue.start()
