@@ -229,6 +229,10 @@ open class PhotoBubbleView: UIView, MaximumLayoutWidthSpecificable, BackgroundSi
         return true
     }
 
+    public func visualCenter() -> CGPoint {
+        let layout = self.calculateTextBubbleLayout(maximumWidth: self.preferredMaxLayoutWidth)
+        return layout.visualCenter
+    }
 }
 
 private class PhotoBubbleLayoutModel {
