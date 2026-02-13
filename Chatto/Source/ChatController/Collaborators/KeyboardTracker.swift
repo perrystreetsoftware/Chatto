@@ -135,6 +135,11 @@ class KeyboardTracker {
     @objc
     private func keyboardWillChangeFrame(_ notification: Notification) {
         guard self.isTracking else { return }
+        if #available(iOS 18, *) {
+            if #unavailable(iOS 19) {
+                guard !self.isPerformingForcedLayout else { return }
+            }
+        }
         let bottomConstraint = self.bottomConstraintFromNotification(notification)
 
         // In the event that our keyboard has changed its frame from the first
@@ -183,6 +188,11 @@ class KeyboardTracker {
     }
 
     private func adjustTrackingViewSize() {
+        if #available(iOS 18, *) {
+            if #unavailable(iOS 19) {
+                guard !self.isPerformingForcedLayout else { return }
+            }
+        }
         let inputContainerHeight = self.inputBarContainer.bounds.height
         if self.keyboardTrackerView.preferredSize.height != inputContainerHeight {
             self.keyboardTrackerView.preferredSize.height = inputContainerHeight
