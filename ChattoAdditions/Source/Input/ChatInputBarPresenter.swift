@@ -39,10 +39,12 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
     let chatInputItems: [ChatInputItemProtocol]
     let notificationCenter: NotificationCenter
 
-    public init(chatInputBar: ChatInputBar,
-                chatInputItems: [ChatInputItemProtocol],
-                chatInputBarAppearance: ChatInputBarAppearance,
-                notificationCenter: NotificationCenter = NotificationCenter.default) {
+    public init(
+        chatInputBar: ChatInputBar,
+        chatInputItems: [ChatInputItemProtocol],
+        chatInputBarAppearance: ChatInputBarAppearance,
+        notificationCenter: NotificationCenter = NotificationCenter.default
+    ) {
         self.chatInputBar = chatInputBar
         self.chatInputItems = chatInputItems
         self.chatInputBar.setAppearance(chatInputBarAppearance)
@@ -51,10 +53,12 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
 
         self.chatInputBar.presenter = self
         self.chatInputBar.inputItems = self.chatInputItems
-        self.notificationCenter.addObserver(self, selector: #selector(keyboardDidChangeFrame), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
+        self.notificationCenter.addObserver(
+            self, selector: #selector(keyboardDidChangeFrame), name: UIResponder.keyboardDidChangeFrameNotification, object: nil)
         self.notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         self.notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        self.notificationCenter.addObserver(self, selector: #selector(handleOrienationDidChangeNotification), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
+        self.notificationCenter.addObserver(
+            self, selector: #selector(handleOrienationDidChangeNotification), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
     }
 
     deinit {
@@ -107,6 +111,15 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
     private var lastKnownKeyboardHeight: CGFloat?
     private var allowListenToChangeFrameEvents = true
 
+    /// iOS 26 adds a grabber/separator above custom input views.
+    /// No public API exists to query this value.
+    private var inputViewGrabberHeight: CGFloat {
+        if #available(iOS 26, *) {
+            return 17.0
+        }
+        return 0
+    }
+
     // MARK: Input View
 
     private weak var currentInputView: InputContainerView?
@@ -114,7 +127,7 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
     private func updateHeight(for inputView: InputContainerView) {
         inputView.contentHeight = {
             if let keyboardHeight = self.lastKnownKeyboardHeight, keyboardHeight > 0 {
-                return keyboardHeight
+                return keyboardHeight - self.inputViewGrabberHeight
             } else {
                 if UIScreen.main.portraitOrientation {
                     return UIScreen.main.defaultPortraitKeyboardHeight
@@ -135,7 +148,17 @@ open class BasicChatInputBarPresenter: NSObject, ChatInputBarPresenter {
         guard self.focusedItem != nil else { return }
         guard let value = (notification as NSNotification).userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         guard value.cgRectValue.height > 0 else { return }
-        self.lastKnownKeyboardHeight = value.cgRectValue.height - self.chatInputBar.bounds.height
+        var keyboardHeight: CGFloat
+        if #available(iOS 26, *) {
+            // iOS 26 no longer includes the input accessory view (chat bar)
+            // in the reported keyboard frame, so we skip the subtraction.
+            // Note that for custom intput views, the grabber height is still included in the keyboard frame,
+            // so we have to subtract it out.
+            keyboardHeight = value.cgRectValue.height
+        } else {
+            keyboardHeight = value.cgRectValue.height - self.chatInputBar.bounds.height
+        }
+        self.lastKnownKeyboardHeight = keyboardHeight
     }
 
     @objc
